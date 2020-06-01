@@ -15,3 +15,6 @@ inputs:
     default: 'npm run build'
   use-web-tld:
     description: 'Use .web.app suffix instead of .firebaseapp.com?'
+  channel-ttl:
+    description: 'How long should a preview live?'
+    default: '7d'
