@@ -24,9 +24,9 @@ async function run(github, context) {
         '--no-package-lock',
         'https://storage.googleapis.com/firebase-preview-drop/node/firebase-tools/firebase-tools-7.13.0-hostingpreviews.1.tgz'
     ]);
-    await exec(firebase, ['--open-sesame', 'hostingchannels']);
     endGroup();
 
+    const siteId = getInput('site-id');
     const previewId = context.payload.pull_request.head.sha.substring(0, 7);
     const channelId = `pr${context.payload.pull_request.number}-${previewId}`;
     const channelTTL = getInput('channel-ttl');
@@ -49,6 +49,20 @@ async function run(github, context) {
         }
     });
     const deploymentText = Buffer.concat(buf).toString('utf-8');
+
+    /**
+     * The deployment object looks like this:
+     * {
+     *   "status": "success",
+     *   "result": {
+     *       "<site-id>": {
+     *          "site": "<site-id>",
+     *          "url": "",
+     *          "expireTime": ""
+     *       }
+     *   }
+     * }
+     */
     const deployment = JSON.parse(deploymentText);
     endGroup();
 
@@ -56,11 +70,7 @@ async function run(github, context) {
         throw Error(deploymentText);
     }
 
-    let url = deployment.result.channels.url;
-
-    if (getInput('use-web-tld')) {
-        url = url.replace(/\.firebaseapp\.com$/, '.web.app');
-    }
+    let url = deployment.result[siteId].url;
 
     setOutput('details_url', url);
     setOutput('target_url', url);
@@ -103,8 +113,8 @@ async function run(github, context) {
                 summary: `[${result.url}](${result.url})`
             }
         });
-	} catch (e) {
-		setFailed(e.message);
+    } catch (e) {
+        setFailed(e.message);
 
         await finish({
             conclusion: 'failure',
@@ -141,49 +151,49 @@ async function createCheck(github, context) {
 // create a PR comment, or update one if it already exists
 async function postOrUpdateComment(github, context, commentMarkdown) {
     const commentInfo = {
-		...context.repo,
-		issue_number: context.issue.number
-	};
+        ...context.repo,
+        issue_number: context.issue.number
+    };
 
-	const comment = {
-		...commentInfo,
-		body: commentMarkdown + '\n\n<sub>firebase-hosting-preview-action</sub>'
-	};
+    const comment = {
+        ...commentInfo,
+        body: commentMarkdown + '\n\n<sub>firebase-hosting-preview-action</sub>'
+    };
 
-	startGroup(`Updating PR comment`);
-	let commentId;
-	try {
-		const comments = (await github.issues.listComments(commentInfo)).data;
-		for (let i=comments.length; i--; ) {
-			const c = comments[i];
-			if (c.user.type === 'Bot' && /<sub>[\s\n]*firebase-hosting-preview-action/.test(c.body)) {
-				commentId = c.id;
-				break;
-			}
-		}
-	}
-	catch (e) {
-		console.log('Error checking for previous comments: ' + e.message);
-	}
+    startGroup(`Updating PR comment`);
+    let commentId;
+    try {
+        const comments = (await github.issues.listComments(commentInfo)).data;
+        for (let i = comments.length; i--;) {
+            const c = comments[i];
+            if (c.user.type === 'Bot' && /<sub>[\s\n]*firebase-hosting-preview-action/.test(c.body)) {
+                commentId = c.id;
+                break;
+            }
+        }
+    }
+    catch (e) {
+        console.log('Error checking for previous comments: ' + e.message);
+    }
 
-	if (commentId) {
-		try {
-			await github.issues.updateComment({
-				...context.repo,
-				comment_id: commentId,
-				body: comment.body
-			});
-		}
-		catch (e) {
-			commentId = null;
-		}
-	}
+    if (commentId) {
+        try {
+            await github.issues.updateComment({
+                ...context.repo,
+                comment_id: commentId,
+                body: comment.body
+            });
+        }
+        catch (e) {
+            commentId = null;
+        }
+    }
 
-	if (!commentId) {
-		try {
-			await github.issues.createComment(comment);
-		} catch (e) {
-			console.log(`Error creating comment: ${e.message}`);
+    if (!commentId) {
+        try {
+            await github.issues.createComment(comment);
+        } catch (e) {
+            console.log(`Error creating comment: ${e.message}`);
         }
     }
     endGroup();
