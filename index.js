@@ -27,8 +27,7 @@ async function run(github, context) {
     endGroup();
 
     const siteId = getInput('site-id');
-    const previewId = context.payload.pull_request.head.sha.substring(0, 7);
-    const channelId = `pr${context.payload.pull_request.number}-${previewId}`;
+    const channelId = context.payload.pull_request.number;
     const channelTTL = getInput('channel-ttl');
 
     startGroup(`Deploying to Firebase`);
@@ -97,7 +96,7 @@ async function run(github, context) {
 
         if (token) {
             await postOrUpdateComment(github, context, `
-                🚀 Deploy preview for ${previewId}:
+                🚀 Deploy preview for ${context.payload.pull_request.head.sha.substring(0, 7)}:
 
                 <a href="${result.url}">${result.url}</a>
 
