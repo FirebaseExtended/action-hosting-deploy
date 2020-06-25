@@ -4,22 +4,18 @@ author: 'Jason Miller (https://github.com/developit)'
 runs:
   using: 'node12'
   main: 'action.min.js'
-env: 
-  FIREBASE_CLI_PREVIEWS: hostingchannels
 inputs:
   repo-token:
     description: 'The GITHUB_TOKEN secret'
+    required: false
   firebase-token:
     description: 'Firebase CI auth token (run "firebase login:ci")'
     required: true
   build-script:
     description: 'A script to run that builds your project'
     default: 'npm run build'
-  use-web-tld:
-    description: 'Use .web.app suffix instead of .firebaseapp.com?'
+    required: false
   channel-ttl:
     description: 'How long should a preview live?'
     default: '7d'
-  site-id:
-    description: 'The id of your hosting site (if you do not have multiple sites configured, this will be your Firebase project id)'
-    required: true
+    required: false
