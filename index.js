@@ -23,11 +23,11 @@ async function run(github, context) {
         '--no-save',
         '--no-package-lock',
         'https://storage.googleapis.com/firebase-preview-drop/node/firebase-tools/firebase-tools-7.13.0-hostingpreviews.1.tgz'
-    ]);
+    ], {env: {['FIREBASE_CLI_PREVIEWS']: 'hostingchannels'}});
     endGroup();
 
-    const siteId = getInput('site-id');
-    const channelId = context.payload.pull_request.number;
+    const branchName = context.payload.pull_request.head.ref.substr(0, 20)
+    const channelId = `pr${context.payload.pull_request.number}-${branchName}`;
     const channelTTL = getInput('channel-ttl');
 
     startGroup(`Deploying to Firebase`);
@@ -69,13 +69,15 @@ async function run(github, context) {
         throw Error(deploymentText);
     }
 
-    let url = deployment.result[siteId].url;
+    const allSiteResults = Array.from(deployment.result[siteId].children);
+    const expireTime = allSiteResults[0].expireTime;
+    const urls = allSiteResults.map(siteResult => siteResult.url);
 
-    setOutput('details_url', url);
-    setOutput('target_url', url);
-    setOutput('url', url);
+    setOutput('urls', urls);
+    setOutput('expire_time', expireTime);
+    setOutput('details_url', urls[0]);
 
-    return { url };
+    return { urls, expireTime };
 }
 
 (async () => {
@@ -90,26 +92,28 @@ async function run(github, context) {
     try {
         const result = await run(github, context);
 
-        if (!result) {
+        if (!result || result.urls.length === 0) {
             throw Error('No URL was returned for the deployment.');
         }
+
+        const urlsListMarkdown = urls.length === 1 ? `[${urls[0]}](${urls[0]})` : urls.map(url => `- [${url}](${url})`).join('/n');
 
         if (token) {
             await postOrUpdateComment(github, context, `
                 🚀 Deploy preview for ${context.payload.pull_request.head.sha.substring(0, 7)}:
 
-                <a href="${result.url}">${result.url}</a>
+                ${urlsListMarkdown}
 
                 <sub>(${new Date().toUTCString()})</sub>
             `.trim().replace(/^\s+/gm, ''));
         }
 
         await finish({
-            details_url: result.url,
+            details_url: result.urls[0],
             conclusion: 'success',
             output: {
                 title: `Deploy preview succeeded`,
-                summary: `[${result.url}](${result.url})`
+                summary: urlsListMarkdown
             }
         });
     } catch (e) {
