@@ -3,17 +3,6 @@ import { getInput, startGroup, endGroup, setFailed, setOutput } from '@actions/c
 import { GitHub, context } from '@actions/github';
 
 async function run(github, context) {
-    startGroup('Installing dependencies');
-    await exec('npm', ['install', '--no-audit']);
-    endGroup();
-
-    const buildScript = getInput('build-script');
-    if (buildScript) {
-        startGroup(`Building using "${buildScript}"`);
-        await exec(buildScript);
-        endGroup();
-    }
-
     const firebaseToken = getInput('firebase-token', { required: true });
 
     const firebase = './node_modules/.bin/firebase';
