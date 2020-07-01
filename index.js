@@ -18,12 +18,22 @@ async function run(github, context) {
 
     const firebase = './node_modules/.bin/firebase';
     startGroup('Setting up Firebase');
-    await exec('npm', [
+    await exec(
+      'npm',
+      [
         'install',
         '--no-save',
         '--no-package-lock',
-        'https://storage.googleapis.com/firebase-preview-drop/node/firebase-tools/firebase-tools-7.13.0-hostingpreviews.1.tgz'
-    ], {env: {['FIREBASE_CLI_PREVIEWS']: 'hostingchannels'}});
+        'https://firebasestorage.googleapis.com/v0/b/jeff-storage-90953.appspot.com/o/firebase-tools-8.4.2-HOSTINGCHANNELS.tgz?alt=media&token=c4710029-2d0c-4189-910b-7eec5c681136',
+      ],
+      {
+        env: {
+          ['FIREBASE_CLI_PREVIEWS']: 'hostingchannels',
+          ['FIREBASE_HOSTING_API_URL']:
+            'https://staging-firebasehosting.sandbox.googleapis.com',
+        },
+      }
+    );
     endGroup();
 
     const branchName = context.payload.pull_request.head.ref.substr(0, 20)
