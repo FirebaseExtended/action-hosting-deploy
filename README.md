@@ -63,4 +63,4 @@ The length of time the channel should live. Default is 7 days.
 ### `project-id` _{string}_
 
 The project to deploy to. If you leave this blank, be sure to check in a
-.firebaserc file so the CLI knows what project to deploy to.
+`.firebaserc` file so the CLI knows what project to deploy to.
