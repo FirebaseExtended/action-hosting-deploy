@@ -51,7 +51,13 @@ async function run(github, context) {
   endGroup();
 
   // Set the channel id based on input, PR, or branch name
+
+  startGroup('PAYLOAD OBJECT');
+  console.log(JSON.stringify(Object.keys(context.payload)));
   console.log(JSON.stringify(context.payload));
+  endGroup();
+
+  console.log(`****branchname: ${context.payload.branchName}`);
   let channelId;
   if (!!configuredChannelId) {
     channelId = configuredChannelId;
