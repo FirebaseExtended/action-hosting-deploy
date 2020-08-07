@@ -50,14 +50,7 @@ async function run(github, context) {
   await exec(firebase, ['--version']);
   endGroup();
 
-  // Set the channel id based on input, PR, or branch name
-
-  startGroup('PAYLOAD OBJECT');
-  console.log(JSON.stringify(Object.keys(context.payload)));
-  console.log(JSON.stringify(context.payload));
-  endGroup();
-
-  console.log(`****branchname: ${process.env.GITHUB_REF.split('/').pop()}`);
+  // Set the channel id based on input or PR
   let channelId;
   if (!!configuredChannelId) {
     channelId = configuredChannelId;
