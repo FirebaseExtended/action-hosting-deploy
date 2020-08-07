@@ -22,10 +22,10 @@ jobs:
       # - run: npm run build
       - uses: ./
         with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
-          firebase-service-account: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
           expires: 30d
-          project-id: jeff-test-6993
+          projectId: jeff-test-6993
         env:
           # temporary until preview channels are in public beta
           FIREBASE_CLI_PREVIEWS: hostingchannels
@@ -33,7 +33,7 @@ jobs:
 
 ## Options
 
-### `firebase-service-account` _{string}_ (required)
+### `firebaseServiceAccount` _{string}_ (required)
 
 This is a service account JSON key that you can get from the
 [Firebase Console](https://firebase.google.com/project/_/settings/serviceaccounts/adminsdk)
@@ -47,9 +47,9 @@ to prevent unintended access your Firebase project. Set it in the "Secrets" area
 of your repository settings and add it as `FIREBASE_SERVICE_ACCOUNT`:
 `https://github.com/USERNAME/REPOSITORY/settings/secrets`
 
-### `repo-token` _{string}_
+### `repoToken` _{string}_
 
-Adding `repo-token: "${{secrets.GITHUB_TOKEN}}"` lets the action comment on PRs
+Adding `repoToken: "${{secrets.GITHUB_TOKEN}}"` lets the action comment on PRs
 with the link to the deploy preview. You don't need to set this secret
 yourself - github will set it automatically.
 
@@ -60,7 +60,7 @@ build log.
 
 The length of time the channel should live. Default is 7 days.
 
-### `project-id` _{string}_
+### `projectId` _{string}_
 
 The project to deploy to. If you leave this blank, be sure to check in a
 `.firebaserc` file so the CLI knows what project to deploy to.

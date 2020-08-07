@@ -10,9 +10,9 @@ jobs:
       # - run: npm run build
       - uses: ./
         with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
-          firebase-service-account: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
-          project-id: jeff-test-699d3
+          projectId: jeff-test-699d3
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels

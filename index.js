@@ -18,7 +18,7 @@ async function run(github, context) {
 
   // Set up Google Application Credentials for use by the Firebase CLI
   // https://cloud.google.com/docs/authentication/production#finding_credentials_automatically
-  const googleApplicationCredentials = getInput('firebase-service-account', {
+  const googleApplicationCredentials = getInput('firebaseServiceAccount', {
     required: true,
   });
   const tmpFile = fileSync({ postfix: '.json' });
@@ -48,7 +48,7 @@ async function run(github, context) {
 
   const channelId = `pr${context.payload.pull_request.number}-${branchName}`;
   const channelTTL = getInput('expires');
-  const projectId = getInput('project-id');
+  const projectId = getInput('projectId');
 
   startGroup(`Deploying to Firebase preview channel ${channelId}`);
   let buf = [];
@@ -112,7 +112,7 @@ async function run(github, context) {
 }
 
 (async () => {
-  const token = process.env.GITHUB_TOKEN || getInput('repo-token');
+  const token = process.env.GITHUB_TOKEN || getInput('repoToken');
   const github = token ? new GitHub(token) : {};
 
   let finish = (details) => console.log(details);

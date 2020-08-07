@@ -1,23 +1,23 @@
-name: 'firebase-hosting-preview-action'
-description: 'Firebase Hosting Preview'
-author: 'Jason Miller (https://github.com/developit) and Firebase'
+name: "firebase-hosting-preview-action"
+description: "Firebase Hosting Preview"
+author: "Jason Miller (https://github.com/developit) and Firebase"
 runs:
-  using: 'node12'
-  main: 'action.min.js'
+  using: "node12"
+  main: "action.min.js"
 inputs:
-  repo-token:
-    description: 'The GITHUB_TOKEN secret'
+  repoToken:
+    description: "The GITHUB_TOKEN secret"
     required: false
-  firebase-service-account:
-    description: 'Firebase service account JSON'
+  firebaseServiceAccount:
+    description: "Firebase service account JSON"
     required: true
   expires:
     description:
-      'How long should a preview live? See the preview channels docs for options'
-    default: '7d'
+      "How long should a preview live? See the preview channels docs for options"
+    default: "7d"
     required: false
-  project-id:
+  projectId:
     description:
-      'The project to deploy to. If you leave this blank, make sure you check in
-      a .firebaserc file'
+      "The project to deploy to. If you leave this blank, make sure you check in
+      a .firebaserc file"
     required: false
