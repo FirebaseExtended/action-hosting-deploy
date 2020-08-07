@@ -10,6 +10,14 @@ import { GitHub, context } from '@actions/github';
 import { fileSync } from 'tmp';
 import { writeSync } from 'fs';
 
+// Inputs defined in action.yml
+const channelTTL = getInput('expires');
+const projectId = getInput('projectId');
+const googleApplicationCredentials = getInput('firebaseServiceAccount', {
+  required: true,
+});
+const token = process.env.GITHUB_TOKEN || getInput('repoToken');
+
 const FIREBASE_CLI_NPM_PACKAGE =
   'https://firebasestorage.googleapis.com/v0/b/jeff-storage-90953.appspot.com/o/firebase-tools-8.7.0-CHANNELS.tgz?alt=media&token=dd24cd22-8fe4-492b-ac3c-8caf46a201e5';
 
@@ -18,9 +26,6 @@ async function run(github, context) {
 
   // Set up Google Application Credentials for use by the Firebase CLI
   // https://cloud.google.com/docs/authentication/production#finding_credentials_automatically
-  const googleApplicationCredentials = getInput('firebaseServiceAccount', {
-    required: true,
-  });
   const tmpFile = fileSync({ postfix: '.json' });
   writeSync(tmpFile.fd, googleApplicationCredentials, {
     encoding: 'utf8',
@@ -47,8 +52,6 @@ async function run(github, context) {
   const branchName = context.payload.pull_request.head.ref.substr(0, 20);
 
   const channelId = `pr${context.payload.pull_request.number}-${branchName}`;
-  const channelTTL = getInput('expires');
-  const projectId = getInput('projectId');
 
   startGroup(`Deploying to Firebase preview channel ${channelId}`);
   let buf = [];
@@ -112,7 +115,6 @@ async function run(github, context) {
 }
 
 (async () => {
-  const token = process.env.GITHUB_TOKEN || getInput('repoToken');
   const github = token ? new GitHub(token) : {};
 
   let finish = (details) => console.log(details);
