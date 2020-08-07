@@ -11,6 +11,6 @@
     "tmp": "^0.2.1"
   },
   "scripts": {
-    "build": "microbundle -f cjs --target node --no-sourcemap index.js"
+    "build": "microbundle -f cjs --target node --compress --no-sourcemap index.js"
   }
 }

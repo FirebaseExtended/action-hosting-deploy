@@ -12,6 +12,12 @@ inputs:
     description: 'Firebase service account JSON'
     required: true
   channel-ttl:
-    description: 'How long should a preview live? See the preview channels docs for options'
+    description:
+      'How long should a preview live? See the preview channels docs for options'
     default: '7d'
+    required: false
+  project-id:
+    description:
+      'The project to deploy to. If you leave this blank, make sure you check in
+      a .firebaserc file'
     required: false

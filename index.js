@@ -48,6 +48,7 @@ async function run(github, context) {
 
   const channelId = `pr${context.payload.pull_request.number}-${branchName}`;
   const channelTTL = getInput('channel-ttl');
+  const projectId = getInput('project-id');
 
   startGroup(`Deploying to Firebase preview channel ${channelId}`);
   let buf = [];
@@ -60,6 +61,7 @@ async function run(github, context) {
         channelId,
         //   '--expires', // TODO: expires isn't implemented yet in CLI
         //   channelTTL,
+        ...(projectId ? ['--project', projectId] : []),
         '--json', // keep this option in so that we can easily parse the output
         //   '--debug', // uncomment this for better error output
       ],
