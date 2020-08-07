@@ -57,7 +57,7 @@ async function run(github, context) {
   console.log(JSON.stringify(context.payload));
   endGroup();
 
-  console.log(`****branchname: ${context.payload.branchName}`);
+  console.log(`****branchname: ${process.env.GITHUB_REF.split('/').pop()}`);
   let channelId;
   if (!!configuredChannelId) {
     channelId = configuredChannelId;
