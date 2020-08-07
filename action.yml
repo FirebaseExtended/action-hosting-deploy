@@ -21,3 +21,8 @@ inputs:
       "The project to deploy to. If you leave this blank, make sure you check in
       a .firebaserc file"
     required: false
+  channelId:
+    description:
+      "The preview channel id to deploy to. If you leave this blank, an channel
+      id will be auto-generated per branch or PR"
+    required: false

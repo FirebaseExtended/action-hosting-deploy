@@ -64,3 +64,13 @@ The length of time the channel should live. Default is 7 days.
 
 The project to deploy to. If you leave this blank, be sure to check in a
 `.firebaserc` file so the CLI knows what project to deploy to.
+
+### `channelId` _{string}_
+
+The channel to deploy to. If you don't set it, a new channel will be created
+per-PR or per-branch.
+
+You usually want to leave this blank so that each PR gets its own channel,
+unless you know you want to deploy a certain branch to a long-lived channel (for
+example, you may want to deploy every commit from your `next` branch to a
+`preprod` channel)

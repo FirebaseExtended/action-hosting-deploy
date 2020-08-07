@@ -17,6 +17,7 @@ const googleApplicationCredentials = getInput('firebaseServiceAccount', {
   required: true,
 });
 const token = process.env.GITHUB_TOKEN || getInput('repoToken');
+const configuredChannelId = getInput('channelId');
 
 const FIREBASE_CLI_NPM_PACKAGE =
   'https://firebasestorage.googleapis.com/v0/b/jeff-storage-90953.appspot.com/o/firebase-tools-8.7.0-CHANNELS.tgz?alt=media&token=dd24cd22-8fe4-492b-ac3c-8caf46a201e5';
@@ -49,9 +50,15 @@ async function run(github, context) {
   await exec(firebase, ['--version']);
   endGroup();
 
-  const branchName = context.payload.pull_request.head.ref.substr(0, 20);
-
-  const channelId = `pr${context.payload.pull_request.number}-${branchName}`;
+  // Set the channel id based on input, PR, or branch name
+  console.log(JSON.stringify(context.payload));
+  let channelId;
+  if (!!configuredChannelId) {
+    channelId = configuredChannelId;
+  } else if (context.payload.pull_request) {
+    const branchName = context.payload.pull_request.head.ref.substr(0, 20);
+    channelId = `pr${context.payload.pull_request.number}-${branchName}`;
+  }
 
   startGroup(`Deploying to Firebase preview channel ${channelId}`);
   let buf = [];
