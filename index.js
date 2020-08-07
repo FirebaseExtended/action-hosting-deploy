@@ -47,7 +47,7 @@ async function run(github, context) {
   const branchName = context.payload.pull_request.head.ref.substr(0, 20);
 
   const channelId = `pr${context.payload.pull_request.number}-${branchName}`;
-  const channelTTL = getInput('channel-ttl');
+  const channelTTL = getInput('expires');
   const projectId = getInput('project-id');
 
   startGroup(`Deploying to Firebase preview channel ${channelId}`);

@@ -11,7 +11,7 @@ inputs:
   firebase-service-account:
     description: 'Firebase service account JSON'
     required: true
-  channel-ttl:
+  expires:
     description:
       'How long should a preview live? See the preview channels docs for options'
     default: '7d'

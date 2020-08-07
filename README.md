@@ -24,7 +24,7 @@ jobs:
         with:
           repo-token: '${{ secrets.GITHUB_TOKEN }}'
           firebase-service-account: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          channel-ttl: 30d
+          expires: 30d
           project-id: jeff-test-6993
         env:
           # temporary until preview channels are in public beta
@@ -56,7 +56,7 @@ yourself - github will set it automatically.
 If you omit this option, you'll need to find the preview URL in the action's
 build log.
 
-### `channel-ttl` _{string}_
+### `expires` _{string}_
 
 The length of time the channel should live. Default is 7 days.
 
