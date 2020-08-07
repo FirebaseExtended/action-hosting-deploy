@@ -7,9 +7,10 @@
     "@actions/core": "^1.2.2",
     "@actions/exec": "^1.0.3",
     "@actions/github": "^2.1.1",
-    "microbundle": "^0.12.0-next.8"
+    "microbundle": "^0.12.3",
+    "tmp": "^0.2.1"
   },
   "scripts": {
-    "build": "microbundle -f cjs --target node --compress --no-sourcemap index.js"
+    "build": "microbundle -f cjs --target node --no-sourcemap index.js"
   }
 }

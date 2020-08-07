@@ -19,52 +19,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: developit/firebase-hosting-preview-action@v1
+      # - run: npm run build
+      - uses: ./
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          firebase-token: "${{ secrets.FIREBASE_TOKEN }}"
-          use-web-tld: true
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
+          firebase-service-account: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          channel-ttl: 30d
+        env:
+          # temporary until preview channels are in public beta
+          FIREBASE_CLI_PREVIEWS: hostingchannels
 ```
 
 ## Options
 
-### `firebase-token` _{string}_ (required)
+### `firebase-service-account` _{string}_ (required)
 
-This is a deploy key you need to generate using the Firebase CLI locally, so that the action can publish your project.
+This is a service account JSON key that you can get from the [Firebase Console](https://firebase.google.com/project/_/settings/serviceaccounts/adminsdk) (or eventually via the proposed [`firebase hosting:channel:createworkflow`](https://github.com/FirebasePrivate/firebase-tools/pull/564) command).
 
 It's important to store this token as an [encrypted secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
-to prevent unintended access your Firebase project. Here's how:
-
-<blockquote>
-<table><tbody><tr><td>
-
-**Generating and safely adding the token:**
-
-First, generate a token by running `firebase login:ci` and copying the code it generates.
-
-Then, go to the "Secrets" area of your repository settings and add it as `FIREBASE_TOKEN`:
-
-`https://github.com/USERNAME/REPOSITORY/settings/secrets`
-
-</td><td>
-<img width="240" src="https://user-images.githubusercontent.com/105127/75371305-8223a680-5894-11ea-88ae-9528c67bd406.png">
-</td></tr></tbody></table>
-</blockquote>
-
+to prevent unintended access your Firebase project. Set it in the "Secrets" area of your repository settings and add it as `FIREBASE_SERVICE_ACCOUNT`: `https://github.com/USERNAME/REPOSITORY/settings/secrets`
 
 ### `repo-token` _{string}_
 
-Adding `repo-token: "${{secrets.GITHUB_TOKEN}}"` lets the action comment on PRs with the link to the deploy preview.
+Adding `repo-token: "${{secrets.GITHUB_TOKEN}}"` lets the action comment on PRs with the link to the deploy preview. You don't need to set this secret yourself - github will set it automatically.
+
 If you omit this option, you'll need to find the preview URL in the action's build log.
 
-### `build-script` _{string}_
+### `channel-ttl` _{string}_
 
-Many projects need to be built before deployment. The action will run the script you provide here before it deploys anything to Firebase.
-
-By default, it will try to build your project using `npm run build`.
-
-
-### `use-web-tld` _{boolean}_
-
-By default, deploy preview URLs will link are `PROJECT-HASH.firebaseapp.com`. Pass `use-web-tld: true` to instead use `.web.app`.
-The URLs are interchangeable, this option only controls which one the action links to.
+The length of time the channel should live. Default is 7 days.
