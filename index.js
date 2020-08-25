@@ -51,13 +51,23 @@ async function run(github, context) {
   endGroup();
 
   // Set the channel id based on input or PR
-  let channelId;
+  let tmpChannelId;
   if (!!configuredChannelId) {
-    channelId = configuredChannelId;
+    tmpChannelId = configuredChannelId;
   } else if (context.payload.pull_request) {
     const branchName = context.payload.pull_request.head.ref.substr(0, 20);
-    channelId = `pr${context.payload.pull_request.number}-${branchName}`;
+    tmpChannelId = `pr${context.payload.pull_request.number}-${branchName}`;
   }
+
+  // Channel IDs can only include letters, numbers, underscores, hyphens, and periods.
+  const invalidCharactersRegex = /[^[a-z]|[A-Z]|[0-9]|_|-|\.]/g;
+  const correctedChannelId = tmpChannelId.replace(invalidCharactersRegex, "_");
+  if (correctedChannelId !== tmpChannelId) {
+    console.log(
+      `ChannelId "${tmpChannelId}" contains unsupported characters. Using "${correctedChannelId}" instead.`
+    );
+  }
+  const channelId = correctedChannelId;
 
   startGroup(`Deploying to Firebase preview channel ${channelId}`);
   let buf = [];
