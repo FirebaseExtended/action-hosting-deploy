@@ -15,11 +15,12 @@
   },
   "scripts": {
     "format": "prettier --write .",
-    "build": "microbundle -f cjs --target node --compress --no-sourcemap index.js"
+    "build": "microbundle -f cjs --target node --compress --no-sourcemap index.js",
+    "build:watch": "microbundle watch -f cjs --target node --compress --no-sourcemap index.js"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged && npm run build"
     }
   }
 }
