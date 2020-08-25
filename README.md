@@ -1,31 +1,71 @@
-# Firebase Hosting Preview: GitHub Action
+# Firebase Hosting GitHub Action
 
-A GitHub action that builds and deploys preview versions of your PRs and links
-to them.
+A GitHub action that deploys preview versions of your website.
 
 <img width="529" src="https://i.imgur.com/Mj3C2eg.png">
 
-## Usage:
+## Usage
+
+### Deploy a to a new preview channel for every PR
 
 Add a workflow (`.github/workflows/deploy-preview.yml`):
 
 ```yaml
 name: Deploy Preview
 
-on: [pull_request]
+on:
+  pull_request:
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
 
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      # Add any build steps here. For example:
       # - run: npm run build
       - uses: ./
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
-          projectId: jeff-test-6993
+          projectId: your-Firebase-project-ID
+        env:
+          # temporary until preview channels are in public beta
+          FIREBASE_CLI_PREVIEWS: hostingchannels
+```
+
+### Deploy to your live site on merge
+
+Add a workflow (`.github/workflows/deploy-prod.yml`):
+
+```yaml
+name: Deploy Production Site
+
+on:
+  push:
+    branches:
+      - master
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm run build
+      - uses: ./
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          expires: 30d
+          projectId: your-Firebase-project-ID
+          channelId: live
         env:
           # temporary until preview channels are in public beta
           FIREBASE_CLI_PREVIEWS: hostingchannels
