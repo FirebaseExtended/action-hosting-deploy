@@ -13,6 +13,6 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
-          projectId: jeff-test-699d3
+          projectId: action-hosting-deploy-demo
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
