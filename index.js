@@ -81,7 +81,7 @@ async function run(github, context) {
         //   '--expires', // TODO: expires isn't implemented yet in CLI
         //   channelTTL,
         ...(projectId ? ["--project", projectId] : []),
-        "--json", // keep this option in so that we can easily parse the output
+        // "--json", // keep this option in so that we can easily parse the output
         "--debug", // uncomment this for better error output
       ],
       {
