@@ -60,7 +60,7 @@ async function run(github, context) {
   }
 
   // Channel IDs can only include letters, numbers, underscores, hyphens, and periods.
-  const invalidCharactersRegex = /[^[a-z]|[A-Z]|[0-9]|_|-|\.]/g;
+  const invalidCharactersRegex = /[^a-zA-Z0-9_\-\.]/g;
   const correctedChannelId = tmpChannelId.replace(invalidCharactersRegex, "_");
   if (correctedChannelId !== tmpChannelId) {
     console.log(
