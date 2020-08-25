@@ -82,7 +82,7 @@ async function run(github, context) {
         //   channelTTL,
         ...(projectId ? ["--project", projectId] : []),
         "--json", // keep this option in so that we can easily parse the output
-        //   '--debug', // uncomment this for better error output
+        "--debug", // uncomment this for better error output
       ],
       {
         listeners: {
