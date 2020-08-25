@@ -1,35 +1,35 @@
-import { exec } from '@actions/exec';
+import { exec } from "@actions/exec";
 import {
   getInput,
   startGroup,
   endGroup,
   setFailed,
   setOutput,
-} from '@actions/core';
-import { GitHub, context } from '@actions/github';
-import { fileSync } from 'tmp';
-import { writeSync } from 'fs';
+} from "@actions/core";
+import { GitHub, context } from "@actions/github";
+import { fileSync } from "tmp";
+import { writeSync } from "fs";
 
 // Inputs defined in action.yml
-const channelTTL = getInput('expires');
-const projectId = getInput('projectId');
-const googleApplicationCredentials = getInput('firebaseServiceAccount', {
+const channelTTL = getInput("expires");
+const projectId = getInput("projectId");
+const googleApplicationCredentials = getInput("firebaseServiceAccount", {
   required: true,
 });
-const token = process.env.GITHUB_TOKEN || getInput('repoToken');
-const configuredChannelId = getInput('channelId');
+const token = process.env.GITHUB_TOKEN || getInput("repoToken");
+const configuredChannelId = getInput("channelId");
 
 const FIREBASE_CLI_NPM_PACKAGE =
-  'https://firebasestorage.googleapis.com/v0/b/jeff-storage-90953.appspot.com/o/firebase-tools-8.7.0-CHANNELS.tgz?alt=media&token=dd24cd22-8fe4-492b-ac3c-8caf46a201e5';
+  "https://firebasestorage.googleapis.com/v0/b/jeff-storage-90953.appspot.com/o/firebase-tools-8.7.0-CHANNELS.tgz?alt=media&token=dd24cd22-8fe4-492b-ac3c-8caf46a201e5";
 
 async function run(github, context) {
-  startGroup('Setting up Firebase');
+  startGroup("Setting up Firebase");
 
   // Set up Google Application Credentials for use by the Firebase CLI
   // https://cloud.google.com/docs/authentication/production#finding_credentials_automatically
-  const tmpFile = fileSync({ postfix: '.json' });
+  const tmpFile = fileSync({ postfix: ".json" });
   writeSync(tmpFile.fd, googleApplicationCredentials, {
-    encoding: 'utf8',
+    encoding: "utf8",
   });
   const gacEnv = {
     ...process.env,
@@ -37,17 +37,17 @@ async function run(github, context) {
   };
 
   // Install Firebase CLI
-  await exec('npm', [
-    'install',
-    '--no-save',
-    '--no-package-lock',
+  await exec("npm", [
+    "install",
+    "--no-save",
+    "--no-package-lock",
     FIREBASE_CLI_NPM_PACKAGE,
   ]);
-  const firebase = './node_modules/.bin/firebase';
+  const firebase = "./node_modules/.bin/firebase";
 
   // Log the CLI version to double check that it installed correctly
   // and is available
-  await exec(firebase, ['--version']);
+  await exec(firebase, ["--version"]);
   endGroup();
 
   // Set the channel id based on input or PR
@@ -66,12 +66,12 @@ async function run(github, context) {
     await exec(
       firebase,
       [
-        'hosting:channel:deploy',
+        "hosting:channel:deploy",
         channelId,
         //   '--expires', // TODO: expires isn't implemented yet in CLI
         //   channelTTL,
-        ...(projectId ? ['--project', projectId] : []),
-        '--json', // keep this option in so that we can easily parse the output
+        ...(projectId ? ["--project", projectId] : []),
+        "--json", // keep this option in so that we can easily parse the output
         //   '--debug', // uncomment this for better error output
       ],
       {
@@ -84,12 +84,12 @@ async function run(github, context) {
       }
     );
   } catch (e) {
-    console.log(Buffer.concat(buf).toString('utf-8'));
+    console.log(Buffer.concat(buf).toString("utf-8"));
     console.log(e.message);
     throw e;
   }
 
-  const deploymentText = Buffer.concat(buf).toString('utf-8');
+  const deploymentText = Buffer.concat(buf).toString("utf-8");
 
   /**
      * Example CLI output:
@@ -113,9 +113,9 @@ async function run(github, context) {
   const expireTime = allSiteResults[0].expireTime;
   const urls = allSiteResults.map((siteResult) => siteResult.url);
 
-  setOutput('urls', urls);
-  setOutput('expire_time', expireTime);
-  setOutput('details_url', urls[0]);
+  setOutput("urls", urls);
+  setOutput("expire_time", expireTime);
+  setOutput("details_url", urls[0]);
 
   return { urls, expireTime };
 }
@@ -132,7 +132,7 @@ async function run(github, context) {
     const result = await run(github, context);
 
     if (!result || result.urls.length === 0) {
-      throw Error('No URL was returned for the deployment.');
+      throw Error("No URL was returned for the deployment.");
     }
 
     const { urls, expireTime } = result;
@@ -140,7 +140,7 @@ async function run(github, context) {
     const urlsListMarkdown =
       urls.length === 1
         ? `[${urls[0]}](${urls[0]})`
-        : urls.map((url) => `- [${url}](${url})`).join('/n');
+        : urls.map((url) => `- [${url}](${url})`).join("/n");
 
     if (token) {
       await postOrUpdateComment(
@@ -157,7 +157,7 @@ ${urlsListMarkdown}
 
     await finish({
       details_url: urls[0],
-      conclusion: 'success',
+      conclusion: "success",
       output: {
         title: `Deploy preview succeeded`,
         summary: urlsListMarkdown,
@@ -167,9 +167,9 @@ ${urlsListMarkdown}
     setFailed(e.message);
 
     await finish({
-      conclusion: 'failure',
+      conclusion: "failure",
       output: {
-        title: 'Deploy preview failed',
+        title: "Deploy preview failed",
         summary: `Error: ${e.message}`,
       },
     });
@@ -180,9 +180,9 @@ ${urlsListMarkdown}
 async function createCheck(github, context) {
   const check = await github.checks.create({
     ...context.repo,
-    name: 'Deploy Preview',
+    name: "Deploy Preview",
     head_sha: context.payload.pull_request.head.sha,
-    status: 'in_progress',
+    status: "in_progress",
   });
 
   return async (details) => {
@@ -190,7 +190,7 @@ async function createCheck(github, context) {
       ...context.repo,
       check_run_id: check.data.id,
       completed_at: new Date().toISOString(),
-      status: 'completed',
+      status: "completed",
       ...details,
     });
   };
@@ -205,7 +205,7 @@ async function postOrUpdateComment(github, context, commentMarkdown) {
 
   const comment = {
     ...commentInfo,
-    body: commentMarkdown + '\n\n<sub>firebase-hosting-preview-action</sub>',
+    body: commentMarkdown + "\n\n<sub>firebase-hosting-preview-action</sub>",
   };
 
   startGroup(`Updating PR comment`);
@@ -215,7 +215,7 @@ async function postOrUpdateComment(github, context, commentMarkdown) {
     for (let i = comments.length; i--; ) {
       const c = comments[i];
       if (
-        c.user.type === 'Bot' &&
+        c.user.type === "Bot" &&
         /<sub>[\s\n]*firebase-hosting-preview-action/.test(c.body)
       ) {
         commentId = c.id;
@@ -223,7 +223,7 @@ async function postOrUpdateComment(github, context, commentMarkdown) {
       }
     }
   } catch (e) {
-    console.log('Error checking for previous comments: ' + e.message);
+    console.log("Error checking for previous comments: " + e.message);
   }
 
   if (commentId) {

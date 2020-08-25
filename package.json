@@ -7,10 +7,19 @@
     "@actions/core": "^1.2.2",
     "@actions/exec": "^1.0.3",
     "@actions/github": "^2.1.1",
+    "husky": "^4.2.5",
     "microbundle": "^0.12.3",
+    "prettier": "^2.1.0",
+    "pretty-quick": "^3.0.0",
     "tmp": "^0.2.1"
   },
   "scripts": {
+    "format": "prettier --write .",
     "build": "microbundle -f cjs --target node --compress --no-sourcemap index.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }
