@@ -20,7 +20,7 @@ const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const configuredChannelId = getInput("channelId");
 
 const FIREBASE_CLI_NPM_PACKAGE =
-  "https://firebasestorage.googleapis.com/v0/b/jeff-storage-90953.appspot.com/o/firebase-tools-8.7.0-CHANNELS.tgz?alt=media&token=dd24cd22-8fe4-492b-ac3c-8caf46a201e5";
+  "https://storage.googleapis.com/fir-tools-builds/manual/firebase-tools-8.7.0-channels.tgz";
 
 async function run(github, context) {
   startGroup("Setting up Firebase");
