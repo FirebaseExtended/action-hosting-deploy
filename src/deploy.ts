@@ -107,7 +107,7 @@ export async function deploy(
 export async function deployProductionSite(firebase, gacFilename, projectId) {
   const deploymentText = await execWithCredentials(
     firebase,
-    ["deploy", "--only hosting"],
+    ["deploy", "--only", "hosting"],
     projectId,
     gacFilename
   );
