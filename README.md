@@ -114,3 +114,7 @@ You usually want to leave this blank so that each PR gets its own channel,
 unless you know you want to deploy a certain branch to a long-lived channel (for
 example, you may want to deploy every commit from your `next` branch to a
 `preprod` channel)
+
+---
+
+This GitHub Action is not an officially supported Google product
