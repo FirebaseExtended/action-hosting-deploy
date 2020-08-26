@@ -28,9 +28,16 @@ export type ErrorResult = {
   error: string;
 };
 
-export type SuccessResult = {
+export type ChannelSuccessResult = {
   status: "success";
   result: { [key: string]: SiteDeploy };
+};
+
+export type ProductionSuccessResult = {
+  status: "success";
+  result: {
+    hosting: string;
+  };
 };
 
 export type DeployConfig = {
@@ -39,26 +46,21 @@ export type DeployConfig = {
   channelId: string;
 };
 
-export async function deploy(
-  firebase: string,
-  gacFilename: string,
-  deployConfig: DeployConfig
+async function execWithCredentials(
+  firebase,
+  args: string[],
+  projectId,
+  gacFilename
 ) {
-  const { projectId, expires, channelId } = deployConfig;
-
   let deployOutputBuf: Buffer[] = [];
-
   try {
     await exec(
       firebase,
       [
-        "hosting:channel:deploy",
-        channelId,
-        //   '--expires', // TODO: expires isn't implemented yet in CLI
-        //   expires,
+        ...args,
         ...(projectId ? ["--project", projectId] : []),
         "--json", // keep this option in so that we can easily parse the output
-        // "--debug", // uncomment this for better error output
+        // "--debug", // uncomment this for better error output],
       ],
       {
         listeners: {
@@ -78,10 +80,40 @@ export async function deploy(
     throw e;
   }
 
-  const deploymentText = Buffer.concat(deployOutputBuf).toString("utf-8"); // output from the CLI
+  return Buffer.concat(deployOutputBuf).toString("utf-8"); // output from the CLI
+}
+
+export async function deploy(
+  firebase: string,
+  gacFilename: string,
+  deployConfig: DeployConfig
+) {
+  const { projectId, expires, channelId } = deployConfig;
+
+  const deploymentText = await execWithCredentials(
+    firebase,
+    ["hosting:channel:deploy", channelId],
+    projectId,
+    gacFilename
+  );
 
   const deploymentResult = JSON.parse(deploymentText) as
-    | SuccessResult
+    | ChannelSuccessResult
+    | ErrorResult;
+
+  return deploymentResult;
+}
+
+export async function deployProductionSite(firebase, gacFilename, projectId) {
+  const deploymentText = await execWithCredentials(
+    firebase,
+    ["deploy", "--only hosting"],
+    projectId,
+    gacFilename
+  );
+
+  const deploymentResult = JSON.parse(deploymentText) as
+    | ProductionSuccessResult
     | ErrorResult;
 
   return deploymentResult;
