@@ -23,7 +23,7 @@ import {
 } from "@actions/core";
 import { context, GitHub } from "@actions/github";
 import { createGacFile } from "./createGACFile";
-import { deploy, ErrorResult } from "./deploy";
+import { deploy, ErrorResult, deployProductionSite } from "./deploy";
 import { getChannelId } from "./getChannelId";
 import { installFirebaseCLI } from "./installFirebaseCLI";
 import { createCheck } from "./createCheck";
@@ -36,6 +36,7 @@ const googleApplicationCredentials = getInput("firebaseServiceAccount", {
   required: true,
 });
 const configuredChannelId = getInput("channelId");
+const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const github = token ? new GitHub(token) : undefined;
 
@@ -45,6 +46,8 @@ async function run() {
     finish = await createCheck(github as GitHub, context);
   }
 
+  const isPullRequest = !!context.payload.pull_request;
+
   try {
     startGroup("Setting up Firebase");
     const firebase = await installFirebaseCLI();
@@ -53,6 +56,30 @@ async function run() {
     startGroup("Setting up CLI credentials");
     const gacFilename = await createGacFile(googleApplicationCredentials);
     endGroup();
+
+    if (isProductionDeploy) {
+      startGroup("Deploying to production site");
+      const deployment = await deployProductionSite(
+        firebase,
+        gacFilename,
+        projectId
+      );
+      if (deployment.status === "error") {
+        throw Error((deployment as ErrorResult).error);
+      }
+      endGroup();
+
+      const url = `https://${projectId}.web.app`;
+      await finish({
+        details_url: url,
+        conclusion: "success",
+        output: {
+          title: `Production deploy succeeded`,
+          summary: `[${projectId}.web.app](${url})`,
+        },
+      });
+      return;
+    }
 
     const channelId = getChannelId(configuredChannelId, context);
 
@@ -81,7 +108,7 @@ async function run() {
         ? `[${urls[0]}](${urls[0]})`
         : urls.map((url) => `- [${url}](${url})`).join("/n");
 
-    if (token) {
+    if (token && isPullRequest) {
       await postOrUpdateComment(
         github,
         context,
