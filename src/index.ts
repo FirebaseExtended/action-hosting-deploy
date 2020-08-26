@@ -41,12 +41,12 @@ const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const github = token ? new GitHub(token) : undefined;
 
 async function run() {
+  const isPullRequest = !!context.payload.pull_request;
+
   let finish = (details: Object) => console.log(details);
-  if (token) {
+  if (token && isPullRequest) {
     finish = await createCheck(github as GitHub, context);
   }
-
-  const isPullRequest = !!context.payload.pull_request;
 
   try {
     startGroup("Setting up Firebase");
