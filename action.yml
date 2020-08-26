@@ -3,7 +3,7 @@ description: "Firebase Hosting Preview"
 author: "Jason Miller (https://github.com/developit) and Firebase"
 runs:
   using: "node12"
-  main: "action.min.js"
+  main: "bin/action.min.js"
 inputs:
   repoToken:
     description: "The GITHUB_TOKEN secret"
