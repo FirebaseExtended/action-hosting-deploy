@@ -15,6 +15,9 @@
 name: "Deploy to Firebase Hosting"
 description: "A GitHub Action to deploy to Firebase Hosting"
 author: "Jason Miller (https://github.com/developit) and Firebase"
+branding:
+  icon: "globe"
+  color: "blue"
 runs:
   using: "node12"
   main: "bin/action.min.js"
