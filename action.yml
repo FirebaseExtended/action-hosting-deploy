@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "firebase-hosting-preview-action"
-description: "Firebase Hosting Preview"
+name: "Deploy to Firebase Hosting"
+description: "A GitHub Action to deploy to Firebase Hosting"
 author: "Jason Miller (https://github.com/developit) and Firebase"
 runs:
   using: "node12"
