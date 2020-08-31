@@ -1,9 +1,5 @@
 # Firebase Hosting GitHub Action
 
-A GitHub action that deploys preview versions of your website.
-
-<img width="529" src="https://i.imgur.com/Mj3C2eg.png">
-
 ## Usage
 
 ### Deploy a to a new preview channel for every PR
@@ -26,14 +22,13 @@ jobs:
       - uses: actions/checkout@v2
       # Add any build steps here. For example:
       # - run: npm run build
-      - uses: ./
+      - uses: FirebaseExtended/action-hosting-deploy@v1
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
           projectId: your-Firebase-project-ID
         env:
-          # temporary until preview channels are in public beta
           FIREBASE_CLI_PREVIEWS: hostingchannels
 ```
 
@@ -59,16 +54,13 @@ jobs:
       - uses: actions/checkout@v2
       # Add any build steps here. For example:
       # - run: npm run build
-      - uses: ./
+      - uses: FirebaseExtended/action-hosting-deploy@v1
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
           projectId: your-Firebase-project-ID
           channelId: live
-        env:
-          # temporary until preview channels are in public beta
-          FIREBASE_CLI_PREVIEWS: hostingchannels
 ```
 
 ## Options
@@ -108,7 +100,7 @@ The project to deploy to. If you leave this blank, be sure to check in a
 ### `channelId` _{string}_
 
 The channel to deploy to. If you don't set it, a new channel will be created
-per-PR or per-branch.
+per-PR or per-branch. If you set it to **`live`**, the action will deploy to your production Hosting site.
 
 You usually want to leave this blank so that each PR gets its own channel,
 unless you know you want to deploy a certain branch to a long-lived channel (for
