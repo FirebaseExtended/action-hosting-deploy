@@ -67,11 +67,7 @@ jobs:
 
 ### `firebaseServiceAccount` _{string}_ (required)
 
-This is a service account JSON key that you can get from the
-[Firebase Console](https://firebase.google.com/project/_/settings/serviceaccounts/adminsdk)
-(or eventually via the proposed
-[`firebase hosting:channel:createworkflow`](https://github.com/FirebasePrivate/firebase-tools/pull/564)
-command).
+This is a service account JSON key.
 
 It's important to store this token as an
 [encrypted secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
