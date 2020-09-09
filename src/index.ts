@@ -22,11 +22,11 @@ import {
   startGroup,
 } from "@actions/core";
 import { context, GitHub } from "@actions/github";
-import { createGacFile } from "./createGACFile";
-import { deploy, ErrorResult, deployProductionSite } from "./deploy";
-import { getChannelId } from "./getChannelId";
-import { installFirebaseCLI } from "./installFirebaseCLI";
+import { existsSync } from "fs";
 import { createCheck } from "./createCheck";
+import { createGacFile } from "./createGACFile";
+import { deploy, deployProductionSite, ErrorResult } from "./deploy";
+import { getChannelId } from "./getChannelId";
 import { postOrUpdateComment } from "./postOrUpdateComment";
 
 // Inputs defined in action.yml
@@ -39,6 +39,7 @@ const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const github = token ? new GitHub(token) : undefined;
+const entryPoint = getInput("entryPoint");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -49,21 +50,36 @@ async function run() {
   }
 
   try {
-    startGroup("Setting up Firebase");
-    const firebase = await installFirebaseCLI();
+    startGroup("Verifying firebase.json exists");
+
+    if (entryPoint !== ".") {
+      console.log(`Changing to directory: ${entryPoint}`);
+      try {
+        process.chdir(entryPoint);
+      } catch (err) {
+        throw Error(`Error changing to directory ${entryPoint}: ${err}`);
+      }
+    }
+
+    if (existsSync("./firebase.json")) {
+      console.log("firebase.json file found. Continuing deploy.");
+    } else {
+      throw Error(
+        "firebase.json file not found. If your firebase.json file is not in the root of your repo, edit the entryPoint option of this GitHub action."
+      );
+    }
     endGroup();
 
     startGroup("Setting up CLI credentials");
     const gacFilename = await createGacFile(googleApplicationCredentials);
+    console.log(
+      "Created a temporary file with Application Default Credentials."
+    );
     endGroup();
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
-      const deployment = await deployProductionSite(
-        firebase,
-        gacFilename,
-        projectId
-      );
+      const deployment = await deployProductionSite(gacFilename, projectId);
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
       }
@@ -84,7 +100,7 @@ async function run() {
     const channelId = getChannelId(configuredChannelId, context);
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
-    const deployment = await deploy(firebase, gacFilename, {
+    const deployment = await deploy(gacFilename, {
       projectId,
       expires,
       channelId,

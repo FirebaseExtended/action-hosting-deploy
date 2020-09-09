@@ -105,6 +105,10 @@ unless you know you want to deploy a certain branch to a long-lived channel (for
 example, you may want to deploy every commit from your `next` branch to a
 `preprod` channel)
 
+### `entryPoint` _{string}_
+
+The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file) file. Defaults to `.` (the root of your repo).
+
 ---
 
 This GitHub Action is not an officially supported Google product

@@ -72,7 +72,7 @@ async function execWithCredentials(
         },
         env: {
           ...process.env,
-          FIREBASE_DEPLOY_AGENT: 'action-hosting-deploy',
+          FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
           GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
         },
       }
@@ -94,15 +94,11 @@ async function execWithCredentials(
   return Buffer.concat(deployOutputBuf).toString("utf-8"); // output from the CLI
 }
 
-export async function deploy(
-  firebase: string,
-  gacFilename: string,
-  deployConfig: DeployConfig
-) {
+export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
   const { projectId, expires, channelId } = deployConfig;
 
   const deploymentText = await execWithCredentials(
-    firebase,
+    "npx firebase-tools",
     ["hosting:channel:deploy", channelId],
     projectId,
     gacFilename
@@ -115,9 +111,9 @@ export async function deploy(
   return deploymentResult;
 }
 
-export async function deployProductionSite(firebase, gacFilename, projectId) {
+export async function deployProductionSite(gacFilename, projectId) {
   const deploymentText = await execWithCredentials(
-    firebase,
+    "npx firebase-tools",
     ["deploy", "--only", "hosting"],
     projectId,
     gacFilename
