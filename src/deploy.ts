@@ -97,7 +97,7 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
   const { projectId, expires, channelId } = deployConfig;
 
   const deploymentText = await execWithCredentials(
-    "npx firebase",
+    "npx firebase-tools",
     ["hosting:channel:deploy", channelId],
     projectId,
     gacFilename
@@ -112,7 +112,7 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
 
 export async function deployProductionSite(gacFilename, projectId) {
   const deploymentText = await execWithCredentials(
-    "npx firebase",
+    "npx firebase-tools",
     ["deploy", "--only", "hosting"],
     projectId,
     gacFilename
