@@ -27,7 +27,6 @@ import { createCheck } from "./createCheck";
 import { createGacFile } from "./createGACFile";
 import { deploy, deployProductionSite, ErrorResult } from "./deploy";
 import { getChannelId } from "./getChannelId";
-import { installFirebaseCLI } from "./installFirebaseCLI";
 import { postOrUpdateComment } from "./postOrUpdateComment";
 
 // Inputs defined in action.yml
@@ -71,10 +70,6 @@ async function run() {
     }
     endGroup();
 
-    startGroup("Setting up Firebase");
-    const firebase = await installFirebaseCLI();
-    endGroup();
-
     startGroup("Setting up CLI credentials");
     const gacFilename = await createGacFile(googleApplicationCredentials);
     console.log(
@@ -84,11 +79,7 @@ async function run() {
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
-      const deployment = await deployProductionSite(
-        firebase,
-        gacFilename,
-        projectId
-      );
+      const deployment = await deployProductionSite(gacFilename, projectId);
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
       }
@@ -109,7 +100,7 @@ async function run() {
     const channelId = getChannelId(configuredChannelId, context);
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
-    const deployment = await deploy(firebase, gacFilename, {
+    const deployment = await deploy(gacFilename, {
       projectId,
       expires,
       channelId,
