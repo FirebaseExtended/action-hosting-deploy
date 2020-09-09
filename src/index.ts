@@ -53,7 +53,16 @@ async function run() {
 
   try {
     startGroup("Verifying firebase.json exists");
-    await exec("cd", [entryPoint]);
+
+    if (entryPoint !== ".") {
+      console.log(`Changing to directory: ${entryPoint}`);
+      try {
+        process.chdir(entryPoint);
+      } catch (err) {
+        throw Error(`Error changing to directory ${entryPoint}: ${err}`);
+      }
+    }
+
     if (existsSync("./firebase.json")) {
       console.log("firebase.json file found. Continuing deploy.");
     } else {
