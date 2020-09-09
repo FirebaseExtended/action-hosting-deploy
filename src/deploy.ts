@@ -101,7 +101,7 @@ export async function deploy(
   const { projectId, expires, channelId } = deployConfig;
 
   const deploymentText = await execWithCredentials(
-    firebase,
+    "npx firebase",
     ["hosting:channel:deploy", channelId],
     projectId,
     gacFilename
