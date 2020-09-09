@@ -30,7 +30,7 @@ export async function installFirebaseCLI() {
 
   // Log the CLI version to double check that it installed correctly
   // and is available
-  await exec(firebase, ["--version"]);
+  await exec("npx firebase", ["--version"]);
 
   return firebase;
 }
