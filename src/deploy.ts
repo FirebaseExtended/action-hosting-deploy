@@ -102,7 +102,7 @@ export async function deploy(
 
   const deploymentText = await execWithCredentials(
     firebase,
-    ["hosting:channel:deploy", channelId, "--expires", "7d"],
+    ["hosting:channel:deploy", channelId],
     projectId,
     gacFilename
   );
