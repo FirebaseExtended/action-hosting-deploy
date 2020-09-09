@@ -22,14 +22,13 @@ import {
   startGroup,
 } from "@actions/core";
 import { context, GitHub } from "@actions/github";
+import { existsSync } from "fs";
+import { createCheck } from "./createCheck";
 import { createGacFile } from "./createGACFile";
-import { deploy, ErrorResult, deployProductionSite } from "./deploy";
+import { deploy, deployProductionSite, ErrorResult } from "./deploy";
 import { getChannelId } from "./getChannelId";
 import { installFirebaseCLI } from "./installFirebaseCLI";
-import { createCheck } from "./createCheck";
 import { postOrUpdateComment } from "./postOrUpdateComment";
-import { exec } from "@actions/exec";
-import { existsSync } from "fs";
 
 // Inputs defined in action.yml
 const expires = getInput("expires");
