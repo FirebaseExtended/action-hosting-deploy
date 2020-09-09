@@ -69,7 +69,7 @@ async function run() {
       }
       endGroup();
 
-      const url = `https://${projectId}.web.app`;
+      const url = `https://${projectId}.web.app/`;
       await finish({
         details_url: url,
         conclusion: "success",
@@ -106,7 +106,7 @@ async function run() {
     const urlsListMarkdown =
       urls.length === 1
         ? `[${urls[0]}](${urls[0]})`
-        : urls.map((url) => `- [${url}](${url})`).join("/n");
+        : urls.map((url) => `- [${url}](${url})`).join("\n");
 
     if (token && isPullRequest) {
       await postOrUpdateComment(
