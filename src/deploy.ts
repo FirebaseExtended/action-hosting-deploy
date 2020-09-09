@@ -50,7 +50,8 @@ async function execWithCredentials(
   firebase,
   args: string[],
   projectId,
-  gacFilename
+  gacFilename,
+  debug: boolean = false
 ) {
   let deployOutputBuf: Buffer[] = [];
   try {
@@ -59,8 +60,9 @@ async function execWithCredentials(
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
-        "--json", // keep this option in so that we can easily parse the output
-        // "--debug", // uncomment this for better error output],
+        debug
+          ? "--debug" // gives a more thorough error message
+          : "--json", // allows us to easily parse the output
       ],
       {
         listeners: {
@@ -77,7 +79,15 @@ async function execWithCredentials(
   } catch (e) {
     console.log(Buffer.concat(deployOutputBuf).toString("utf-8"));
     console.log(e.message);
-    throw e;
+
+    if (debug === false) {
+      console.log(
+        "Retrying deploy with the --debug flag for better error output"
+      );
+      return execWithCredentials(firebase, args, projectId, gacFilename, true);
+    } else {
+      throw e;
+    }
   }
 
   return Buffer.concat(deployOutputBuf).toString("utf-8"); // output from the CLI
@@ -92,7 +102,7 @@ export async function deploy(
 
   const deploymentText = await execWithCredentials(
     firebase,
-    ["hosting:channel:deploy", channelId],
+    ["hosting:channel:deploy", channelId, "--expires", "7d"],
     projectId,
     gacFilename
   );
