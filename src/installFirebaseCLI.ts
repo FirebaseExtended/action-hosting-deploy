@@ -16,8 +16,7 @@
 
 import { exec } from "@actions/exec";
 
-const FIREBASE_CLI_NPM_PACKAGE =
-  "https://storage.googleapis.com/fir-tools-builds/manual/firebase-tools-8.7.0-channels.tgz";
+const FIREBASE_CLI_NPM_PACKAGE = "firebase-tools";
 
 export async function installFirebaseCLI() {
   // Install Firebase CLI
