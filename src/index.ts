@@ -28,6 +28,8 @@ import { getChannelId } from "./getChannelId";
 import { installFirebaseCLI } from "./installFirebaseCLI";
 import { createCheck } from "./createCheck";
 import { postOrUpdateComment } from "./postOrUpdateComment";
+import { exec } from "@actions/exec";
+import { existsSync } from "fs";
 
 // Inputs defined in action.yml
 const expires = getInput("expires");
@@ -39,6 +41,7 @@ const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const github = token ? new GitHub(token) : undefined;
+const entryPoint = getInput("entryPoint");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -49,12 +52,26 @@ async function run() {
   }
 
   try {
+    startGroup("Verifying firebase.json exists");
+    await exec("cd", [entryPoint]);
+    if (existsSync("./firebase.json")) {
+      console.log("firebase.json file found. Continuing deploy.");
+    } else {
+      throw Error(
+        "firebase.json file not found. If your firebase.json file is not in the root of your repo, edit the entryPoint option of this GitHub action."
+      );
+    }
+    endGroup();
+
     startGroup("Setting up Firebase");
     const firebase = await installFirebaseCLI();
     endGroup();
 
     startGroup("Setting up CLI credentials");
     const gacFilename = await createGacFile(googleApplicationCredentials);
+    console.log(
+      "Created a temporary file with Application Default Credentials."
+    );
     endGroup();
 
     if (isProductionDeploy) {
