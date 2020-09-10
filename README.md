@@ -21,8 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Add any build steps here. For example:
-      # - run: npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v1
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
@@ -53,8 +53,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # Add any build steps here. For example:
-      # - run: npm run build
-      - uses: FirebaseExtended/action-hosting-deploy@v1
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
@@ -107,7 +107,7 @@ example, you may want to deploy every commit from your `next` branch to a
 
 ### `entryPoint` _{string}_
 
-The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file) file. Defaults to `.` (the root of your repo).
+The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file) file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
 ---
 
