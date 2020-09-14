@@ -91,7 +91,9 @@ async function execWithCredentials(
     }
   }
 
-  return Buffer.concat(deployOutputBuf).toString("utf-8"); // output from the CLI
+  return deployOutputBuf.length
+    ? deployOutputBuf[deployOutputBuf.length - 1].toString("utf-8")
+    : ""; // output from the CLI
 }
 
 export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
