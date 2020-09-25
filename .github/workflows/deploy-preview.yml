@@ -26,7 +26,7 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          expires: 30d
+          expires: 14d
           projectId: action-hosting-deploy-demo
           entryPoint: "./demo"
         env:
