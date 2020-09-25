@@ -86,9 +86,7 @@ build log.
 
 ### `expires` _{string}_
 
-> ⚠️ This option isn't supported yet. If you set it, it will be ignored. See [issue #7](https://github.com/FirebaseExtended/action-hosting-deploy/issues/7) for context.
-
-The length of time the channel should live. Default is 7 days.
+The length of time the channel should live. If left blank, uses the Firebase Hosting default expiry (7 days).
 
 ### `projectId` _{string}_
 
