@@ -23,12 +23,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: npm ci
-      - name: Check that source was compiled
-        run: |
-          cp bin/action.min.js bin/action-uploaded.min.js
-          npm run build
-          npx prettier -w --ignore-path does-not-exist bin/action.min.js bin/action-uploaded.min.js
-          diff bin/action.min.js bin/action-uploaded.min.js
       - name: Check that Prettier was run
         run: npm run format:check
       - uses: ./
