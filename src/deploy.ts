@@ -99,7 +99,11 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
 
   const deploymentText = await execWithCredentials(
     "npx firebase-tools",
-    ["hosting:channel:deploy", channelId],
+    [
+      "hosting:channel:deploy",
+      channelId,
+      ...(expires ? ["--expires", expires] : []),
+    ],
     projectId,
     gacFilename
   );
