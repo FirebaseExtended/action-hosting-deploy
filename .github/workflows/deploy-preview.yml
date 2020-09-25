@@ -14,14 +14,7 @@
 
 name: Deploy Preview
 
-on:
-  pull_request:
-    paths:
-      - "src/**"
-      - "bin/**"
-      - "demo/**"
-      - "action.yml"
-      - "*.json"
+on: pull_request
 
 jobs:
   build_and_preview:
