@@ -38,7 +38,7 @@ export async function postOrUpdateComment(
     ...commentInfo,
     body:
       commentMarkdown +
-      "\n\n<sub>[Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting)</sub>",
+      "\n\n<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>",
   };
 
   startGroup(`Updating PR comment`);
@@ -49,7 +49,7 @@ export async function postOrUpdateComment(
       const c = comments[i];
       if (
         c.user.type === "Bot" &&
-        /<sub>[\s\n]*\[Firebase Hosting GitHub Action/.test(c.body)
+        /<sub>[\s\n]*🔥 via \[Firebase Hosting GitHub Action/.test(c.body)
       ) {
         commentId = c.id;
         break;
