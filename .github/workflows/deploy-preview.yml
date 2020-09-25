@@ -21,15 +21,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm ci
       - name: Check that source was compiled
         run: |
-          npm ci
           cp bin/action.min.js bin/action-uploaded.min.js
           npm run build
-          npx prettier -w bin/action.min.js bin/action-uploaded.min.js
+          npx prettier -w --ignore-path does-not-exist bin/action.min.js bin/action-uploaded.min.js
           cmp -b bin/action.min.js bin/action-uploaded.min.js
       - name: Check that Prettier was run
-        run: npx prettier . --list-different
+        run: npm run format:check
       - uses: ./
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"

@@ -17,6 +17,7 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
+    "format:check": "prettier . --list-different",
     "format": "prettier --write .",
     "build": "microbundle -f cjs --target node --compress --no-sourcemap src/index.ts",
     "build:watch": "microbundle watch -f cjs --target node --compress --no-sourcemap src/index.ts"
