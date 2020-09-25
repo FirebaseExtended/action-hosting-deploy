@@ -14,14 +14,28 @@
 
 name: Deploy Preview
 
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "bin/**"
+      - "demo/**"
+      - "action.yml"
+      - "*.json"
 
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - run: npm run build
+      - name: Check that source was compiled
+        run: |
+          npm ci
+          cp bin/action.min.js bin/action-uploaded.min.js
+          npm run build
+          cmp bin/action.min.js bin/action-uploaded.min.js
+      - name: Check that Prettier was run
+        run: npx prettier . --list-different
       - uses: ./
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
