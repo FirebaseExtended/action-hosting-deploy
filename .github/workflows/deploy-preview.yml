@@ -14,14 +14,17 @@
 
 name: Deploy Preview
 
-on: [pull_request]
+on: pull_request
 
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - run: npm run build
+      - name: Install dependencies
+        run: npm ci
+      - name: Check that Prettier was run
+        run: npm run format:check
       - uses: ./
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
