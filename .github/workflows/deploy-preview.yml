@@ -26,6 +26,7 @@ jobs:
           npm ci
           cp bin/action.min.js bin/action-uploaded.min.js
           npm run build
+          npx prettier -w bin/action.min.js bin/action-uploaded.min.js
           cmp -b bin/action.min.js bin/action-uploaded.min.js
       - name: Check that Prettier was run
         run: npx prettier . --list-different
