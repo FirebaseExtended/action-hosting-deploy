@@ -38,6 +38,6 @@ jobs:
           FIREBASE_CLI_PREVIEWS: hostingchannels
       - name: Check outputs
         run: |
-          echo url ${{steps.firebase_hosting_preview.outputs.url}}
+          echo urls ${{steps.firebase_hosting_preview.outputs.url}}
           echo expire_time ${{steps.firebase_hosting_preview.outputs.expire_time}}
           echo details_url ${{steps.firebase_hosting_preview.outputs.details_url}}
