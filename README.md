@@ -111,6 +111,22 @@ from your `next` branch to a `preprod` preview channel).
 The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
+## Outputs
+
+Values emitted by this action that can be consumed by other actions later in your workflow
+
+### `urls`
+
+The url(s) deployed to
+
+### `expire_time`
+
+The time the deployed preview urls expire
+
+### `details_url`
+
+A single URL that was deployed to
+
 ---
 
 This GitHub Action is not an officially supported Google product

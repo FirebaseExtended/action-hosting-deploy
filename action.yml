@@ -48,3 +48,10 @@ inputs:
       directory"
     default: "."
     required: false
+outputs:
+  urls:
+    description: The url(s) deployed to
+  expire_time:
+    description: The time the deployed preview urls expire
+  details_url:
+    description: A single URL that was deployed to
