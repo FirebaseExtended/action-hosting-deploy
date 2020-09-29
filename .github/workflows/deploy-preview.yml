@@ -22,7 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       # - run: npm run build
-      - uses: ./
+      - name: Deploy to Firebase Hosting preview channel
+        id: firebase_hosting_preview
+        uses: ./
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
@@ -31,3 +33,8 @@ jobs:
           entryPoint: "./demo"
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+      - name: Check outputs
+        run: |
+          echo url ${{steps.firebase_hosting_preview.outputs.url}}
+          echo expire_time ${{steps.firebase_hosting_preview.outputs.expire_time}}
+          echo details_url ${{steps.firebase_hosting_preview.outputs.details_url}}
