@@ -125,11 +125,13 @@ async function run() {
         : urls.map((url) => `- [${url}](${url})`).join("\n");
 
     if (token && isPullRequest) {
+      const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
+
       await postOrUpdateComment(
         github,
         context,
         `
-Deploy preview for ${context.payload.pull_request?.head.sha.substring(0, 7)}:
+Visit the preview URL for this PR (updated for commit ${commitId}):
 
 ${urlsListMarkdown}
 
