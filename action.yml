@@ -39,8 +39,15 @@ inputs:
     required: false
   channelId:
     description:
-      "The preview channel id to deploy to. If you leave this blank, an channel
+      "The preview channel id to deploy to. If you leave this blank, a channel
       id will be auto-generated per branch or PR"
+    required: false
+  target:
+    description:
+      "The hosting target to deploy to. If you leave this blank, the default target
+      or all targets defined in the .firebaserc will be deployed, see 
+      [Deploy targets](https://firebase.google.com/docs/cli/targets#set-up-deploy-target-hosting) 
+      for more information on targets"
     required: false
   entryPoint:
     description:

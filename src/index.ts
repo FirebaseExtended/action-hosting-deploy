@@ -40,6 +40,7 @@ const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const github = token ? new GitHub(token) : undefined;
 const entryPoint = getInput("entryPoint");
+const target = getInput("target");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -79,7 +80,10 @@ async function run() {
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
-      const deployment = await deployProductionSite(gacFilename, projectId);
+      const deployment = await deployProductionSite(gacFilename, {
+        projectId,
+        target
+        });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
       }
@@ -104,6 +108,7 @@ async function run() {
       projectId,
       expires,
       channelId,
+      target
     });
     endGroup();
 
