@@ -45,8 +45,8 @@ inputs:
   target:
     description:
       "The hosting target to deploy to. If you leave this blank, the default target
-      or all targets defined in the .firebaserc will be deployed, see 
-      [Deploy targets](https://firebase.google.com/docs/cli/targets#set-up-deploy-target-hosting) 
+      or all targets defined in the .firebaserc will be deployed, see
+      [Deploy targets](https://firebase.google.com/docs/cli/targets#set-up-deploy-target-hosting)
       for more information on targets"
     required: false
   entryPoint:

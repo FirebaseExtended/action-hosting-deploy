@@ -82,8 +82,8 @@ async function run() {
       startGroup("Deploying to production site");
       const deployment = await deployProductionSite(gacFilename, {
         projectId,
-        target
-        });
+        target,
+      });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
       }
@@ -108,7 +108,7 @@ async function run() {
       projectId,
       expires,
       channelId,
-      target
+      target,
     });
     endGroup();
 

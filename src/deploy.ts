@@ -110,7 +110,7 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
     [
       "hosting:channel:deploy",
       channelId,
-      (!target ? '' : ("--only " + target))
+      !target ? "" : "--only " + target,
       ...(expires ? ["--expires", expires] : []),
     ],
     projectId,
@@ -124,12 +124,15 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
   return deploymentResult;
 }
 
-export async function deployProductionSite(gacFilename, productionDeployConfig:productionDeployConfig) {
+export async function deployProductionSite(
+  gacFilename,
+  productionDeployConfig: productionDeployConfig
+) {
   const { projectId, target } = productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
     "npx firebase-tools",
-    ["deploy", (!target ? "--only hosting" : ("--only hosting:" + target))],
+    ["deploy", !target ? "--only hosting" : "--only hosting:" + target],
     projectId,
     gacFilename
   );
