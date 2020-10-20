@@ -22,8 +22,9 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
   if (!!configuredChannelId) {
     tmpChannelId = configuredChannelId;
   } else if (ghContext.payload.pull_request) {
-    const branchName = ghContext.payload.pull_request.head.ref.substr(0, 20);
-    tmpChannelId = `pr${ghContext.payload.pull_request.number}-${branchName}`;
+    // const branchName = ghContext.payload.pull_request.head.ref.substr(0, 20);
+    // tmpChannelId = `pr${ghContext.payload.pull_request.number}-${branchName}`;
+    tmpChannelId = `pr${ghContext.payload.pull_request.number}`;
   }
 
   // Channel IDs can only include letters, numbers, underscores, hyphens, and periods.
