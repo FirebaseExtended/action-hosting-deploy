@@ -17,9 +17,59 @@
 import { endGroup, startGroup } from "@actions/core";
 import { GitHub } from "@actions/github";
 import { Context } from "@actions/github/lib/context";
+import {
+  ChannelSuccessResult,
+  interpretChannelDeployResult,
+  ErrorResult,
+} from "./deploy";
+
+const BOT_SIGNATURE =
+  "<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>";
+
+export function isCommentByBot(comment): boolean {
+  return comment.user.type === "Bot" && comment.body.includes(BOT_SIGNATURE);
+}
+
+export function getURLsMarkdownFromChannelDeployResult(
+  result: ChannelSuccessResult
+): string {
+  const { urls } = interpretChannelDeployResult(result);
+
+  return urls.length === 1
+    ? `[${urls[0]}](${urls[0]})`
+    : urls.map((url) => `- [${url}](${url})`).join("\n");
+}
+
+export function getChannelDeploySuccessComment(
+  result: ChannelSuccessResult,
+  commit: string
+) {
+  const urlList = getURLsMarkdownFromChannelDeployResult(result);
+  const { expireTime } = interpretChannelDeployResult(result);
+
+  return `
+Visit the preview URL for this PR (updated for commit ${commit}):
+
+${urlList}
+
+<sub>(expires ${new Date(expireTime).toUTCString()})</sub>
+
+${BOT_SIGNATURE}`.trim();
+}
+
+export async function postChannelSuccessComment(
+  github: GitHub | undefined,
+  context: Context,
+  result: ChannelSuccessResult,
+  commit: string
+) {
+  const commentMarkdown = getChannelDeploySuccessComment(result, commit);
+
+  return postOrUpdateComment(github, context, commentMarkdown);
+}
 
 // create a PR comment, or update one if it already exists
-export async function postOrUpdateComment(
+async function postOrUpdateComment(
   github: GitHub | undefined,
   context: Context,
   commentMarkdown: string
@@ -36,21 +86,16 @@ export async function postOrUpdateComment(
 
   const comment = {
     ...commentInfo,
-    body:
-      commentMarkdown +
-      "\n\n<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>",
+    body: commentMarkdown,
   };
 
-  startGroup(`Updating PR comment`);
+  startGroup(`Commenting on PR`);
   let commentId;
   try {
     const comments = (await github.issues.listComments(commentInfo)).data;
     for (let i = comments.length; i--; ) {
       const c = comments[i];
-      if (
-        c.user.type === "Bot" &&
-        /<sub>[\s\n]*🔥 via \[Firebase Hosting GitHub Action/.test(c.body)
-      ) {
+      if (isCommentByBot(c)) {
         commentId = c.id;
         break;
       }

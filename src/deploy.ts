@@ -18,7 +18,7 @@ import { exec } from "@actions/exec";
 
 export type SiteDeploy = {
   site: string;
-  target: string | undefined;
+  target?: string;
   url: string;
   expireTime: string;
 };
@@ -45,6 +45,20 @@ export type DeployConfig = {
   expires: string;
   channelId: string;
 };
+
+export function interpretChannelDeployResult(
+  deployResult: ChannelSuccessResult
+): { expireTime: string; urls: string[] } {
+  const allSiteResults = Object.values(deployResult.result);
+
+  const expireTime = allSiteResults[0].expireTime;
+  const urls = allSiteResults.map((siteResult) => siteResult.url);
+
+  return {
+    expireTime,
+    urls,
+  };
+}
 
 async function execWithCredentials(
   firebase,

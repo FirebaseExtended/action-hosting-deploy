@@ -25,9 +25,17 @@ import { context, GitHub } from "@actions/github";
 import { existsSync } from "fs";
 import { createCheck } from "./createCheck";
 import { createGacFile } from "./createGACFile";
-import { deploy, deployProductionSite, ErrorResult } from "./deploy";
+import {
+  deploy,
+  deployProductionSite,
+  ErrorResult,
+  interpretChannelDeployResult,
+} from "./deploy";
 import { getChannelId } from "./getChannelId";
-import { postOrUpdateComment } from "./postOrUpdateComment";
+import {
+  getURLsMarkdownFromChannelDeployResult,
+  postChannelSuccessComment,
+} from "./postOrUpdateComment";
 
 // Inputs defined in action.yml
 const expires = getInput("expires");
@@ -105,15 +113,13 @@ async function run() {
       expires,
       channelId,
     });
-    endGroup();
 
     if (deployment.status === "error") {
       throw Error((deployment as ErrorResult).error);
     }
+    endGroup();
 
-    const allSiteResults = Object.values(deployment.result);
-    const expireTime = allSiteResults[0].expireTime;
-    const urls = allSiteResults.map((siteResult) => siteResult.url);
+    const { expireTime, urls } = interpretChannelDeployResult(deployment);
 
     setOutput("urls", urls);
     setOutput("expire_time", expireTime);
@@ -127,16 +133,7 @@ async function run() {
     if (token && isPullRequest) {
       const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
 
-      await postOrUpdateComment(
-        github,
-        context,
-        `
-Visit the preview URL for this PR (updated for commit ${commitId}):
-
-${urlsListMarkdown}
-
-<sub>(expires ${new Date(expireTime).toUTCString()})</sub>`.trim()
-      );
+      await postChannelSuccessComment(github, context, deployment, commitId);
     }
 
     await finish({
@@ -144,7 +141,7 @@ ${urlsListMarkdown}
       conclusion: "success",
       output: {
         title: `Deploy preview succeeded`,
-        summary: urlsListMarkdown,
+        summary: getURLsMarkdownFromChannelDeployResult(deployment),
       },
     });
   } catch (e) {
