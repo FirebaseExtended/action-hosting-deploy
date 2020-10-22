@@ -39,8 +39,8 @@ inputs:
     required: false
   channelId:
     description:
-      "The preview channel id to deploy to. If you leave this blank, a channel
-      id will be auto-generated per branch or PR"
+      "The ID of the channel to deploy to. If you leave this blank,
+      a preview channel and its ID will be auto-generated per branch or PR."
     required: false
   target:
     description:
