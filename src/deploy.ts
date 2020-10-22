@@ -110,7 +110,7 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
     [
       "hosting:channel:deploy",
       channelId,
-      !target ? "" : "--only " + target,
+      ...(target ? ["--only", target] : []),
       ...(expires ? ["--expires", expires] : []),
     ],
     projectId,
