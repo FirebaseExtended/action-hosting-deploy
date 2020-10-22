@@ -38,8 +38,7 @@ inputs:
       a .firebaserc file"
     required: false
   channelId:
-    description:
-      "The ID of the channel to deploy to. If you leave this blank,
+    description: "The ID of the channel to deploy to. If you leave this blank,
       a preview channel and its ID will be auto-generated per branch or PR."
     required: false
   target:
