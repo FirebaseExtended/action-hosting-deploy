@@ -44,10 +44,10 @@ inputs:
     required: false
   target:
     description:
-      "The hosting target to deploy to. If you leave this blank, the default target
-      or all targets defined in the .firebaserc will be deployed, see
-      [Deploy targets](https://firebase.google.com/docs/cli/targets#set-up-deploy-target-hosting)
-      for more information on targets"
+      "The target name of the Hosting site to deploy to. If you leave this blank,
+      the default target or all targets defined in the .firebaserc will be deployed to.
+      Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites)
+      for more information about deploy targets."
     required: false
   entryPoint:
     description:
