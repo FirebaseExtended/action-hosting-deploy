@@ -132,7 +132,7 @@ export async function deployProductionSite(
 
   const deploymentText = await execWithCredentials(
     "npx firebase-tools",
-    ["deploy", !target ? "--only hosting" : "--only hosting:" + target],
+    ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
     projectId,
     gacFilename
   );
