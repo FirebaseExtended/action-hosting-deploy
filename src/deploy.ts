@@ -49,7 +49,7 @@ export type DeployConfig = {
 
 export type productionDeployConfig = {
   projectId: string;
-  target: string;
+  target?: string;
 };
 
 async function execWithCredentials(
