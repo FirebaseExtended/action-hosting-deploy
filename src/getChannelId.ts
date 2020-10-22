@@ -29,7 +29,10 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
 
   // Channel IDs can only include letters, numbers, underscores, hyphens, and periods.
   const invalidCharactersRegex = /[^a-zA-Z0-9_\-\.]/g;
-  const correctedChannelId = tmpChannelId.replace(invalidCharactersRegex, "_");
+  const invalidEndCharactersRegex = /[_\-\.]+$/;
+  const correctedChannelId = tmpChannelId
+    .replace(invalidCharactersRegex, "_")
+    .replace(invalidEndCharactersRegex, "");
   if (correctedChannelId !== tmpChannelId) {
     console.log(
       `ChannelId "${tmpChannelId}" contains unsupported characters. Using "${correctedChannelId}" instead.`
