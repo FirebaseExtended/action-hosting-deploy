@@ -4,6 +4,7 @@ import {
   deployPreview,
   deployProductionSite,
   ProductionDeployConfig,
+  ProductionSuccessResult,
 } from "../src/deploy";
 import * as exec from "@actions/exec";
 import {
@@ -13,7 +14,6 @@ import {
   liveDeployMultiSiteSuccess,
   liveDeploySingleSiteSuccess,
 } from "./samples/cliOutputs";
-import { ProductionSuccessResult } from "../bin/deploy";
 
 const baseChannelDeployConfig: DeployConfig = {
   channelId: "my-channel",
