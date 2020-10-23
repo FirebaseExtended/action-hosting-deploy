@@ -38,9 +38,15 @@ inputs:
       a .firebaserc file"
     required: false
   channelId:
+    description: "The ID of the channel to deploy to. If you leave this blank,
+      a preview channel and its ID will be auto-generated per branch or PR."
+    required: false
+  target:
     description:
-      "The preview channel id to deploy to. If you leave this blank, an channel
-      id will be auto-generated per branch or PR"
+      "The target name of the Hosting site to deploy to. If you leave this blank,
+      the default target or all targets defined in the .firebaserc will be deployed to.
+      Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites)
+      for more information about deploy targets."
     required: false
   entryPoint:
     description:
