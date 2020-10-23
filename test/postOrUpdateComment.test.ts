@@ -7,12 +7,15 @@ import {
   getChannelDeploySuccessComment,
   isCommentByBot,
 } from "../src/postOrUpdateComment";
-import { singleSiteSuccess, multiSiteSuccess } from "./samples/cliOutputs";
+import {
+  channelSingleSiteSuccess,
+  channelMultiSiteSuccess,
+} from "./samples/cliOutputs";
 
 describe("postOrUpdateComment", () => {
   it("Creates the expected comment for a single site", () => {
     const comment = getChannelDeploySuccessComment(
-      singleSiteSuccess,
+      channelSingleSiteSuccess,
       "fe211ff"
     );
 
@@ -20,7 +23,10 @@ describe("postOrUpdateComment", () => {
   });
 
   it("Creates the expected comment for multisite", () => {
-    const comment = getChannelDeploySuccessComment(multiSiteSuccess, "fe211ff");
+    const comment = getChannelDeploySuccessComment(
+      channelMultiSiteSuccess,
+      "fe211ff"
+    );
 
     expect(comment).toEqual(multiSiteComment);
   });

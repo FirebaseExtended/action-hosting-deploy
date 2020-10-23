@@ -36,7 +36,7 @@ export type ChannelSuccessResult = {
 export type ProductionSuccessResult = {
   status: "success";
   result: {
-    hosting: string;
+    hosting: string | string[];
   };
 };
 
@@ -44,10 +44,10 @@ export type DeployConfig = {
   projectId: string;
   expires: string;
   channelId: string;
-  target: string;
+  target?: string;
 };
 
-export type productionDeployConfig = {
+export type ProductionDeployConfig = {
   projectId: string;
   target?: string;
 };
@@ -67,16 +67,16 @@ export function interpretChannelDeployResult(
 }
 
 async function execWithCredentials(
-  firebase,
   args: string[],
   projectId,
   gacFilename,
   debug: boolean = false
 ) {
   let deployOutputBuf: Buffer[] = [];
+
   try {
     await exec(
-      firebase,
+      "npx firebase-tools",
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
@@ -105,7 +105,7 @@ async function execWithCredentials(
       console.log(
         "Retrying deploy with the --debug flag for better error output"
       );
-      return execWithCredentials(firebase, args, projectId, gacFilename, true);
+      await execWithCredentials(args, projectId, gacFilename, true);
     } else {
       throw e;
     }
@@ -116,11 +116,13 @@ async function execWithCredentials(
     : ""; // output from the CLI
 }
 
-export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
-  const { projectId, expires, channelId, target } = deployConfig;
+export async function deployPreview(
+  gacFilename: string,
+  deployConfig: DeployConfig
+) {
+  const { projectId, channelId, target, expires } = deployConfig;
 
   const deploymentText = await execWithCredentials(
-    "npx firebase-tools",
     [
       "hosting:channel:deploy",
       channelId,
@@ -131,7 +133,7 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
     gacFilename
   );
 
-  const deploymentResult = JSON.parse(deploymentText) as
+  const deploymentResult = JSON.parse(deploymentText.trim()) as
     | ChannelSuccessResult
     | ErrorResult;
 
@@ -140,12 +142,11 @@ export async function deploy(gacFilename: string, deployConfig: DeployConfig) {
 
 export async function deployProductionSite(
   gacFilename,
-  productionDeployConfig: productionDeployConfig
+  productionDeployConfig: ProductionDeployConfig
 ) {
   const { projectId, target } = productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
-    "npx firebase-tools",
     ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
     projectId,
     gacFilename

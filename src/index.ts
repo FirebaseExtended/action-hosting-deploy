@@ -26,7 +26,7 @@ import { existsSync } from "fs";
 import { createCheck } from "./createCheck";
 import { createGacFile } from "./createGACFile";
 import {
-  deploy,
+  deployPreview,
   deployProductionSite,
   ErrorResult,
   interpretChannelDeployResult,
@@ -112,7 +112,7 @@ async function run() {
     const channelId = getChannelId(configuredChannelId, context);
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
-    const deployment = await deploy(gacFilename, {
+    const deployment = await deployPreview(gacFilename, {
       projectId,
       expires,
       channelId,

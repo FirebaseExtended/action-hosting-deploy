@@ -1,8 +1,12 @@
-import { ChannelSuccessResult } from "../../src/deploy";
+import {
+  ChannelSuccessResult,
+  ErrorResult,
+  ProductionSuccessResult,
+} from "../../src/deploy";
 
 export const commitId = "fe211ff";
 
-export const multiSiteSuccess: ChannelSuccessResult = {
+export const channelMultiSiteSuccess: ChannelSuccessResult = {
   status: "success",
   result: {
     target1: {
@@ -22,7 +26,7 @@ export const multiSiteSuccess: ChannelSuccessResult = {
   },
 };
 
-export const singleSiteSuccess: ChannelSuccessResult = {
+export const channelSingleSiteSuccess: ChannelSuccessResult = {
   status: "success",
   result: {
     "action-hosting-deploy-demo": {
@@ -31,5 +35,28 @@ export const singleSiteSuccess: ChannelSuccessResult = {
         "https://action-hosting-deploy-demo--singlesite-test-jl98rmie.web.app",
       expireTime: "2020-10-27T21:32:57.233344586Z",
     },
+  },
+};
+
+export const channelError: ErrorResult = {
+  status: "error",
+  error:
+    "HTTP Error: 400, Channel IDs can only include letters, numbers, underscores, hyphens, and periods.",
+};
+
+export const liveDeploySingleSiteSuccess: ProductionSuccessResult = {
+  status: "success",
+  result: {
+    hosting: "sites/jeff-test-699d3/versions/7aebddc461b66922",
+  },
+};
+
+export const liveDeployMultiSiteSuccess: ProductionSuccessResult = {
+  status: "success",
+  result: {
+    hosting: [
+      "sites/action-hosting-deploy-demo/versions/cd71a5c43ba0921b",
+      "sites/action-hosting-deploy-demo-2/versions/e843c071a09cecbf",
+    ],
   },
 };
