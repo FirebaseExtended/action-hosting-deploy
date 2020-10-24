@@ -97,14 +97,25 @@ file so that the Firebase CLI knows which Firebase project to use.
 
 ### `channelId` _{string}_
 
-The channel to deploy to. If you don't set it, the action creates
-a new preview channel per-PR or per-branch. If you set it to **`live`**,
-the action deploys to the live channel of your default Hosting site.
+The ID of the channel to deploy to. If you leave this blank,
+a preview channel and its ID will be auto-generated per branch or PR.
+If you set it to **`live`**, the action deploys to the live channel of your default Hosting site.
 
 You usually want to leave this blank so that each PR gets its own preview channel.
 An exception might be that you always want to deploy a certain branch to a
 long-lived preview channel (for example, you may want to deploy every commit
 from your `next` branch to a `preprod` preview channel).
+
+### `target` _{string}_
+
+The target name of the Hosting site to deploy to. If you leave this blank,
+the default target or all targets defined in the `.firebaserc` will be deployed to.
+
+You usually want to leave this blank unless you have set up multiple sites in the Firebase Hosting UI
+and are trying to target just one of those sites with this action.
+
+Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites)
+for more information about deploy targets.
 
 ### `entryPoint` _{string}_
 
