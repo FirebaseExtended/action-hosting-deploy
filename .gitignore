@@ -1,3 +1,4 @@
 node_modules
 .firebase/*
 **/*.d.ts
+demo/.firebase/hosting.*.cache

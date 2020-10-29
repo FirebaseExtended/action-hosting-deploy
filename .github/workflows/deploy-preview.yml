@@ -25,6 +25,8 @@ jobs:
         run: npm ci
       - name: Check that Prettier was run
         run: npm run format:check
+      - name: Test
+        run: npm run test
       - name: Deploy to Firebase Hosting preview channel
         id: firebase_hosting_preview
         uses: ./
