@@ -71,17 +71,6 @@ export async function postChannelSuccessComment(
   result: ChannelSuccessResult,
   commit: string
 ) {
-  const commentMarkdown = getChannelDeploySuccessComment(result, commit);
-
-  return postOrUpdateComment(github, context, commentMarkdown);
-}
-
-// create a PR comment, or update one if it already exists
-async function postOrUpdateComment(
-  github: GitHub | undefined,
-  context: Context,
-  commentMarkdown: string
-) {
   if (!github) {
     console.log("GitHub object not available. Skipping PR comment.");
     return;
@@ -91,6 +80,8 @@ async function postOrUpdateComment(
     ...context.repo,
     issue_number: context.issue.number,
   };
+
+  const commentMarkdown = getChannelDeploySuccessComment(result, commit);
 
   const comment = {
     ...commentInfo,
