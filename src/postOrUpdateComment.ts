@@ -22,6 +22,7 @@ import {
   interpretChannelDeployResult,
   ErrorResult,
 } from "./deploy";
+import { createDeploySignature } from "./hash";
 
 const BOT_SIGNATURE =
   "<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>";
@@ -48,6 +49,7 @@ export function getChannelDeploySuccessComment(
   result: ChannelSuccessResult,
   commit: string
 ) {
+  const deploySignature = createDeploySignature(result);
   const urlList = getURLsMarkdownFromChannelDeployResult(result);
   const { expireTime } = interpretChannelDeployResult(result);
 
@@ -58,7 +60,9 @@ ${urlList}
 
 <sub>(expires ${new Date(expireTime).toUTCString()})</sub>
 
-${BOT_SIGNATURE}`.trim();
+${BOT_SIGNATURE}
+
+<sub>Sign: ${deploySignature}</sub>`.trim();
 }
 
 export async function postChannelSuccessComment(
