@@ -26,9 +26,13 @@ import {
 const BOT_SIGNATURE =
   "<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>";
 
-export function isCommentByBot(comment): boolean {
-  return comment.user.type === "Bot" && comment.body.includes(BOT_SIGNATURE);
+function createBotCommentIdentifier(signature: string) {
+  return function isCommentByBot(comment): boolean {
+    return comment.user.type === "Bot" && comment.body.includes(signature);
+  };
 }
+
+export const isCommentByBot = createBotCommentIdentifier(BOT_SIGNATURE);
 
 export function getURLsMarkdownFromChannelDeployResult(
   result: ChannelSuccessResult
