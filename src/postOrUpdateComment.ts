@@ -27,13 +27,11 @@ import { createDeploySignature } from "./hash";
 const BOT_SIGNATURE =
   "<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>";
 
-function createBotCommentIdentifier(signature: string) {
+export function createBotCommentIdentifier(signature: string) {
   return function isCommentByBot(comment): boolean {
     return comment.user.type === "Bot" && comment.body.includes(signature);
   };
 }
-
-export const isCommentByBot = createBotCommentIdentifier(BOT_SIGNATURE);
 
 export function getURLsMarkdownFromChannelDeployResult(
   result: ChannelSuccessResult
@@ -89,6 +87,9 @@ export async function postChannelSuccessComment(
   };
 
   startGroup(`Commenting on PR`);
+  const deploySignature = createDeploySignature(result);
+  const isCommentByBot = createBotCommentIdentifier(deploySignature);
+
   let commentId;
   try {
     const comments = (await github.issues.listComments(commentInfo)).data;
