@@ -97,13 +97,14 @@ async function run() {
       }
       endGroup();
 
-      const url = `https://${projectId}.web.app/`;
+      const hostname = target ? `${target}.web.app` : `${projectId}.web.app`;
+      const url = `https://${hostname}/`;
       await finish({
         details_url: url,
         conclusion: "success",
         output: {
           title: `Production deploy succeeded`,
-          summary: `[${projectId}.web.app](${url})`,
+          summary: `[${hostname}](${url})`,
         },
       });
       return;
