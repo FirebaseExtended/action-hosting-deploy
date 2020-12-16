@@ -86,8 +86,10 @@ build log.
 
 ### `expires` _{string}_
 
-The length of time the preview channel should remain active.
+The length of time the preview channel should remain active after the last deploy.
 If left blank, the action uses the default expiry of 7 days.
+The expiry date will reset to this value on every new deployment.
+
 
 ### `projectId` _{string}_
 
