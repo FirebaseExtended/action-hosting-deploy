@@ -26,4 +26,4 @@ jobs:
       - name: Build
         run: npm run build
       - name: Ensure built files in branch match
-        run: git diff --exit-code -- "*.min.js"
+        run: git diff --ignore-space-at-eol --exit-code -- "*.min.js"
