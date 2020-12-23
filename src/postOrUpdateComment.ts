@@ -15,7 +15,7 @@
  */
 
 import { endGroup, startGroup } from "@actions/core";
-import { GitHub } from "@actions/github";
+import type { GitHub } from "@actions/github/lib/utils";
 import { Context } from "@actions/github/lib/context";
 import {
   ChannelSuccessResult,
@@ -64,16 +64,11 @@ ${BOT_SIGNATURE}
 }
 
 export async function postChannelSuccessComment(
-  github: GitHub | undefined,
+  github: InstanceType<typeof GitHub>,
   context: Context,
   result: ChannelSuccessResult,
   commit: string
 ) {
-  if (!github) {
-    console.log("GitHub object not available. Skipping PR comment.");
-    return;
-  }
-
   const commentInfo = {
     ...context.repo,
     issue_number: context.issue.number,

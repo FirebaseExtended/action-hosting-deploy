@@ -21,7 +21,7 @@ import {
   setOutput,
   startGroup,
 } from "@actions/core";
-import { context, GitHub } from "@actions/github";
+import { context, getOctokit } from "@actions/github";
 import { existsSync } from "fs";
 import { createCheck } from "./createCheck";
 import { createGacFile } from "./createGACFile";
@@ -46,7 +46,7 @@ const googleApplicationCredentials = getInput("firebaseServiceAccount", {
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
-const github = token ? new GitHub(token) : undefined;
+const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
 
@@ -55,7 +55,7 @@ async function run() {
 
   let finish = (details: Object) => console.log(details);
   if (token && isPullRequest) {
-    finish = await createCheck(github as GitHub, context);
+    finish = await createCheck(octokit, context);
   }
 
   try {
@@ -136,10 +136,10 @@ async function run() {
         ? `[${urls[0]}](${urls[0]})`
         : urls.map((url) => `- [${url}](${url})`).join("\n");
 
-    if (token && isPullRequest) {
+    if (token && isPullRequest && !!octokit) {
       const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
 
-      await postChannelSuccessComment(github, context, deployment, commitId);
+      await postChannelSuccessComment(octokit, context, deployment, commitId);
     }
 
     await finish({
