@@ -28,8 +28,6 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
           projectId: your-Firebase-project-ID
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
 ```
 
 ### Deploy to your live channel on merge
@@ -48,7 +46,7 @@ on:
     # - "website/**"
 
 jobs:
-  build_and_preview:
+  deploy_live_website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +56,6 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          expires: 30d
           projectId: your-Firebase-project-ID
           channelId: live
 ```

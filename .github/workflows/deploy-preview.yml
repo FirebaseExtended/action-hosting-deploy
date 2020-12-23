@@ -30,8 +30,6 @@ jobs:
           expires: 14d
           projectId: action-hosting-deploy-demo
           entryPoint: "./demo"
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
       - name: Check outputs
         run: |
           echo urls ${{steps.firebase_hosting_preview.outputs.url}}
