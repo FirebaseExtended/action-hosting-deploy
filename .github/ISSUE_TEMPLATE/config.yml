@@ -1,0 +1,10 @@
+# https://docs.github.com/en/free-pro-team@latest/github/building-a-strong-community/configuring-issue-templates-for-your-repository#configuring-the-template-chooser
+
+blank_issues_enabled: true
+contact_links:
+  - name: Issues with the `firebase init` command
+    url: https://github.com/firebase/firebase-tools/issues/new/choose
+    about: The firebase-tools repository is the place to report issues with the `firebase init` command.
+  - name: 🔥 Firebase Support
+    url: https://firebase.google.com/support/
+    about: If you have an urgent issue with your app in production, please contact support.
