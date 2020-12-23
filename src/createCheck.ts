@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { GitHub } from "@actions/github";
-import { Context } from "@actions/github/lib/context";
+import type { Context } from "@actions/github/lib/context";
+import type { GitHub } from "@actions/github/lib/utils";
 
 // create a check and return a function that updates (completes) it
-export async function createCheck(github: GitHub, context: Context) {
+export async function createCheck(
+  github: InstanceType<typeof GitHub>,
+  context: Context
+) {
   const check = await github.checks.create({
     ...context.repo,
     name: "Deploy Preview",

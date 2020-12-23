@@ -1,4 +1,19 @@
-# Firebase Hosting GitHub Action
+# 🔥🌎 Firebase Hosting GitHub Action
+
+- Creates a new preview channel (and its associated preview URL) for every PR on your GitHub repository.
+- Adds a comment to the PR with the preview URL so that you and each reviewer can view and test the PR's changes in a "preview" version of your app.
+- Updates the preview URL with changes from each commit by automatically deploying to the associated preview channel. The URL doesn't change with each new commit.
+- (Optional) Deploys the current state of your GitHub repo to your live channel when the PR is merged.
+
+## Setup
+
+A full setup guide can be found [in the Firebase Hosting docs](https://firebase.google.com/docs/hosting/github-integration).
+
+The [Firebase CLI](https://firebase.google.com/docs/cli) can get you set up quickly with a default configuration. Just run:
+
+```bash
+firebase init hosting:github
+```
 
 ## Usage
 
@@ -28,8 +43,6 @@ jobs:
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 30d
           projectId: your-Firebase-project-ID
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
 ```
 
 ### Deploy to your live channel on merge
@@ -48,7 +61,7 @@ on:
     # - "website/**"
 
 jobs:
-  build_and_preview:
+  deploy_live_website:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +71,6 @@ jobs:
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          expires: 30d
           projectId: your-Firebase-project-ID
           channelId: live
 ```
@@ -67,7 +79,7 @@ jobs:
 
 ### `firebaseServiceAccount` _{string}_ (required)
 
-This is a service account JSON key.
+This is a service account JSON key. The easiest way to set it up is to run `firebase init hosting:github`. However, it can also be [created manually](./docs/service-account.md).
 
 It's important to store this token as an
 [encrypted secret](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
@@ -90,7 +102,6 @@ The length of time the preview channel should remain active after the last deplo
 If left blank, the action uses the default expiry of 7 days.
 The expiry date will reset to this value on every new deployment.
 
-
 ### `projectId` _{string}_
 
 The Firebase project that contains the Hosting site to which you
@@ -103,7 +114,7 @@ The ID of the channel to deploy to. If you leave this blank,
 a preview channel and its ID will be auto-generated per branch or PR.
 If you set it to **`live`**, the action deploys to the live channel of your default Hosting site.
 
-You usually want to leave this blank so that each PR gets its own preview channel.
+_You usually want to leave this blank_ so that each PR gets its own preview channel.
 An exception might be that you always want to deploy a certain branch to a
 long-lived preview channel (for example, you may want to deploy every commit
 from your `next` branch to a `preprod` preview channel).

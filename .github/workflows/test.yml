@@ -12,26 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Deploy Preview
+name: Test
 
 on: pull_request
 
 jobs:
-  preview:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy to Firebase Hosting preview channel
-        id: firebase_hosting_preview
-        uses: ./
-        with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
-          expires: 14d
-          projectId: action-hosting-deploy-demo
-          entryPoint: "./demo"
-      - name: Check outputs
-        run: |
-          echo urls ${{steps.firebase_hosting_preview.outputs.url}}
-          echo expire_time ${{steps.firebase_hosting_preview.outputs.expire_time}}
-          echo details_url ${{steps.firebase_hosting_preview.outputs.details_url}}
+      - name: Install dependencies
+        run: npm ci
+      - name: Check that Prettier was run
+        run: npm run format:check
+      - name: Test
+        run: npm run test
