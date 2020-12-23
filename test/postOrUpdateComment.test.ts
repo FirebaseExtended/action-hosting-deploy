@@ -5,12 +5,13 @@ import {
 } from "./samples/comments";
 import {
   getChannelDeploySuccessComment,
-  isCommentByBot,
+  createBotCommentIdentifier,
 } from "../src/postOrUpdateComment";
 import {
   channelSingleSiteSuccess,
   channelMultiSiteSuccess,
 } from "./samples/cliOutputs";
+import { createDeploySignature } from "../src/hash";
 
 describe("postOrUpdateComment", () => {
   it("Creates the expected comment for a single site", () => {
@@ -32,6 +33,8 @@ describe("postOrUpdateComment", () => {
   });
 
   it("Can tell if a comment has been written by itself", () => {
+    const signature = createDeploySignature(channelSingleSiteSuccess);
+    const isCommentByBot = createBotCommentIdentifier(signature);
     const testComment = {
       user: { type: "Bot" },
       body: singleSiteComment,
@@ -40,6 +43,8 @@ describe("postOrUpdateComment", () => {
   });
 
   it("Can tell if a comment has not been written by itself", () => {
+    const signature = createDeploySignature(channelMultiSiteSuccess);
+    const isCommentByBot = createBotCommentIdentifier(signature);
     const testComment = {
       user: { type: "Bot" },
       body: notABotComment,

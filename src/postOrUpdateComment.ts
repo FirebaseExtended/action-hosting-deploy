@@ -22,12 +22,15 @@ import {
   interpretChannelDeployResult,
   ErrorResult,
 } from "./deploy";
+import { createDeploySignature } from "./hash";
 
 const BOT_SIGNATURE =
   "<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>";
 
-export function isCommentByBot(comment): boolean {
-  return comment.user.type === "Bot" && comment.body.includes(BOT_SIGNATURE);
+export function createBotCommentIdentifier(signature: string) {
+  return function isCommentByBot(comment): boolean {
+    return comment.user.type === "Bot" && comment.body.includes(signature);
+  };
 }
 
 export function getURLsMarkdownFromChannelDeployResult(
@@ -44,6 +47,7 @@ export function getChannelDeploySuccessComment(
   result: ChannelSuccessResult,
   commit: string
 ) {
+  const deploySignature = createDeploySignature(result);
   const urlList = getURLsMarkdownFromChannelDeployResult(result);
   const { expireTime } = interpretChannelDeployResult(result);
 
@@ -54,7 +58,9 @@ ${urlList}
 
 <sub>(expires ${new Date(expireTime).toUTCString()})</sub>
 
-${BOT_SIGNATURE}`.trim();
+${BOT_SIGNATURE}
+
+<sub>Sign: ${deploySignature}</sub>`.trim();
 }
 
 export async function postChannelSuccessComment(
@@ -62,17 +68,6 @@ export async function postChannelSuccessComment(
   context: Context,
   result: ChannelSuccessResult,
   commit: string
-) {
-  const commentMarkdown = getChannelDeploySuccessComment(result, commit);
-
-  return postOrUpdateComment(github, context, commentMarkdown);
-}
-
-// create a PR comment, or update one if it already exists
-async function postOrUpdateComment(
-  github: GitHub | undefined,
-  context: Context,
-  commentMarkdown: string
 ) {
   if (!github) {
     console.log("GitHub object not available. Skipping PR comment.");
@@ -84,12 +79,17 @@ async function postOrUpdateComment(
     issue_number: context.issue.number,
   };
 
+  const commentMarkdown = getChannelDeploySuccessComment(result, commit);
+
   const comment = {
     ...commentInfo,
     body: commentMarkdown,
   };
 
   startGroup(`Commenting on PR`);
+  const deploySignature = createDeploySignature(result);
+  const isCommentByBot = createBotCommentIdentifier(deploySignature);
+
   let commentId;
   try {
     const comments = (await github.issues.listComments(commentInfo)).data;
