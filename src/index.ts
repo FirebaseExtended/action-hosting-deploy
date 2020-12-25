@@ -51,6 +51,7 @@ const entryPoint = getInput("entryPoint");
 const target = getInput("target");
 
 async function run() {
+  console.log(context.action);
   const isPullRequest = !!context.payload.pull_request;
 
   let finish = (details: Object) => console.log(details);
@@ -163,4 +164,5 @@ async function run() {
   }
 }
 
+console.log(`context.payload.action: ${context.payload.action}`);
 run();
