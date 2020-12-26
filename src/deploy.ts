@@ -23,6 +23,12 @@ export type SiteDeploy = {
   expireTime: string;
 };
 
+export type SiteRemoval = {
+  site: string;
+  target?: string;
+  url: string;
+};
+
 export type ErrorResult = {
   status: "error";
   error: string;
@@ -50,6 +56,16 @@ export type DeployConfig = {
 export type ProductionDeployConfig = {
   projectId: string;
   target?: string;
+};
+
+export type RemovalSuccessResult = {
+  status: "success";
+  result: { [key: string]: SiteRemoval };
+};
+
+export type RemovalSkippedResult = {
+  status: "skipped";
+  result: { [key: string]: SiteDeploy };
 };
 
 export function interpretChannelDeployResult(
@@ -138,6 +154,26 @@ export async function deployPreview(
     | ErrorResult;
 
   return deploymentResult;
+}
+
+export async function removePreview(
+  gacFilename: string,
+  deployConfig: DeployConfig
+) {
+  const { projectId, channelId } = deployConfig;
+
+  const removeDeployment = await execWithCredentials(
+    ["hosting:channel:delete", channelId, "--force"],
+    projectId,
+    gacFilename
+  );
+
+  const removeResults = JSON.parse(removeDeployment.trim()) as
+    | RemovalSkippedResult
+    | RemovalSuccessResult
+    | ErrorResult;
+
+  return removeResults;
 }
 
 export async function deployProductionSite(
