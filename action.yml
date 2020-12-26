@@ -54,6 +54,10 @@ inputs:
       directory"
     default: "."
     required: false
+  removeOnClose:
+    description: "Whether to remove the preview channels after a pull request is closed."
+    default: false
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to

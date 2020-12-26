@@ -135,6 +135,14 @@ for more information about deploy targets.
 The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
+### `removeOnClose` _{boolean}_
+
+Whether to remove the preview channel(s) once the PR is closed (not the same as when a PR is merged). If this is set to false, the preview channel will be removed on its previously set expiry time.
+
+This option has no effect when channelId is set to live
+
+Default is false
+
 ## Outputs
 
 Values emitted by this action that can be consumed by other actions later in your workflow

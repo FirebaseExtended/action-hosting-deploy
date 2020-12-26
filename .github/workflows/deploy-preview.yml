@@ -14,7 +14,9 @@
 
 name: Deploy Preview
 
-on: pull_request
+on:
+  pull_request:
+    types: [closed, synchronize, reopened, opened]
 
 jobs:
   preview:
@@ -28,8 +30,9 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 14d
-          projectId: action-hosting-deploy-demo
+          projectId: opensource-test-6b243
           entryPoint: "./demo"
+          removeOnClose: true
       - name: Check outputs
         run: |
           echo urls ${{steps.firebase_hosting_preview.outputs.url}}
