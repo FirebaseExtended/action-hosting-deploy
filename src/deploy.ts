@@ -119,7 +119,7 @@ async function execWithCredentials(
 
     if (debug === false) {
       console.log(
-        "Retrying deploy with the --debug flag for better error output"
+        "Retrying preview channel action with the --debug flag for better error output"
       );
       await execWithCredentials(args, projectId, gacFilename, true);
     } else {

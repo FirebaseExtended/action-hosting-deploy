@@ -117,17 +117,10 @@ async function run() {
             throw Error((removeDeployment as ErrorResult).error);
           }
 
-          const hostname = target
-            ? `${target}.web.app`
-            : `${projectId}.web.app`;
-          const url = `https://${hostname}/`;
-
           await finish({
-            details_url: url,
             conclusion: "success",
             output: {
               title: `Preview channel removed`,
-              summary: `Expired preview channel: [${hostname}](${url})`,
             },
           });
         } catch (e) {
