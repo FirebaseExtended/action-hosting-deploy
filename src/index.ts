@@ -101,7 +101,8 @@ async function run() {
         await finish({
           conclusion: "skipped",
           output: {
-            title: `Skipping removal in production channel, or because removeOnClose option was set to false`,
+            title: `Removal skipped`,
+            summary: `Skipping removal in production channel, or because removeOnClose option was set to false`,
           },
         });
       } else {
@@ -121,6 +122,7 @@ async function run() {
             conclusion: "success",
             output: {
               title: `Preview channel removed`,
+              summary: `Preview channel for this PR has been removed`,
             },
           });
         } catch (e) {
