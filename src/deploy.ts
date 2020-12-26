@@ -27,6 +27,7 @@ export type SiteRemoval = {
   site: string;
   target?: string;
   url: string;
+  expireTime?: string;
 };
 
 export type ErrorResult = {
@@ -60,12 +61,6 @@ export type ProductionDeployConfig = {
 
 export type RemovalSuccessResult = {
   status: "success";
-  result: { [key: string]: SiteRemoval };
-};
-
-export type RemovalSkippedResult = {
-  status: "skipped";
-  result: { [key: string]: SiteDeploy };
 };
 
 export function interpretChannelDeployResult(
@@ -161,7 +156,6 @@ export async function removePreview(
   deployConfig: DeployConfig
 ) {
   const { projectId, channelId } = deployConfig;
-
   const removeDeployment = await execWithCredentials(
     ["hosting:channel:delete", channelId, "--force"],
     projectId,
@@ -169,7 +163,6 @@ export async function removePreview(
   );
 
   const removeResults = JSON.parse(removeDeployment.trim()) as
-    | RemovalSkippedResult
     | RemovalSuccessResult
     | ErrorResult;
 

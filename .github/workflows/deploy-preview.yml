@@ -30,7 +30,7 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 14d
-          projectId: opensource-test-6b243
+          projectId: action-hosting-deploy-demo
           entryPoint: "./demo"
           removeOnClose: true
       - name: Check outputs
