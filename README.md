@@ -9,8 +9,15 @@
 
 A full setup guide can be found [in the Firebase Hosting docs](https://firebase.google.com/docs/hosting/github-integration).
 
-The [Firebase CLI](https://firebase.google.com/docs/cli) can get you set up quickly with a default configuration. Just run:
+The [Firebase CLI](https://firebase.google.com/docs/cli) can get you set up quickly with a default configuration.
 
+- If you've NOT set up Hosting, run this version of the command from the root of your local directory:
+```bash
+firebase init hosting
+```
+
+- If you've ALREADY set up Hosting, then you just need to set up the GitHub Action part of Hosting.
+  Run this version of the command from the root of your local directory:
 ```bash
 firebase init hosting:github
 ```
