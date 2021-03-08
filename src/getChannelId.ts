@@ -24,6 +24,11 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
   } else if (ghContext.payload.pull_request) {
     const branchName = ghContext.payload.pull_request.head.ref.substr(0, 20);
     tmpChannelId = `pr${ghContext.payload.pull_request.number}-${branchName}`;
+  } else {
+    // Fallback so we always have a channel name for preview channel
+    const branchName = ghContext.ref.substr(0, 20);
+    const sha = ghContext.sha.substr(0, 8) 
+    tmpChannelId = `commit${sha}-${branchName}`;
   }
 
   // Channel IDs can only include letters, numbers, underscores, hyphens, and periods.
