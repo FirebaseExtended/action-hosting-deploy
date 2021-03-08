@@ -26,8 +26,8 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
     tmpChannelId = `pr${ghContext.payload.pull_request.number}-${branchName}`;
   } else {
     // Fallback so we always have a channel name for preview channel
-    const branchName = ghContext.ref.substr(0, 20);
-    const sha = ghContext.sha.substr(0, 8) 
+    const branchName = ghContext.ref.substr(0, 20).replace("refs/heads/", "");
+    const sha = ghContext.sha.substr(0, 8);
     tmpChannelId = `commit${sha}-${branchName}`;
   }
 
