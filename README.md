@@ -62,7 +62,7 @@ name: Deploy to Live Channel
 on:
   push:
     branches:
-      - master
+      - main
     # Optionally configure to run only for specific files. For example:
     # paths:
     # - "website/**"
