@@ -30,6 +30,7 @@ import {
   deployProductionSite,
   ErrorResult,
   interpretChannelDeployResult,
+  removePreview,
 } from "./deploy";
 import { getChannelId } from "./getChannelId";
 import {
@@ -49,6 +50,7 @@ const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
+const removeOnClose = getInput("removeOnClose");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -86,6 +88,59 @@ async function run() {
     );
     endGroup();
 
+    const channelId = getChannelId(configuredChannelId, context);
+
+    const {
+      payload: { action },
+    } = context;
+
+    // Checking if the action is trigged by a PR closing
+    if (action === "closed") {
+      startGroup("Removing preview channel");
+      if (!removeOnClose || isProductionDeploy) {
+        await finish({
+          conclusion: "skipped",
+          output: {
+            title: `Removal skipped`,
+            summary: `Skipping removal in production channel, or because removeOnClose option was set to false`,
+          },
+        });
+      } else {
+        try {
+          const removeDeployment = await removePreview(gacFilename, {
+            projectId,
+            expires,
+            channelId,
+            target,
+          });
+
+          if (removeDeployment.status === "error") {
+            throw Error((removeDeployment as ErrorResult).error);
+          }
+
+          await finish({
+            conclusion: "success",
+            output: {
+              title: `Preview channel removed`,
+              summary: `Preview channel for this PR has been removed`,
+            },
+          });
+        } catch (e) {
+          setFailed(e.message);
+
+          await finish({
+            conclusion: "failure",
+            output: {
+              title: "Remove preview failed",
+              summary: `Error: ${e.message}, wait for the expiry date or remove it manually.`,
+            },
+          });
+        }
+      }
+      endGroup();
+      return;
+    }
+
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
       const deployment = await deployProductionSite(gacFilename, {
@@ -109,8 +164,6 @@ async function run() {
       });
       return;
     }
-
-    const channelId = getChannelId(configuredChannelId, context);
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
     const deployment = await deployPreview(gacFilename, {

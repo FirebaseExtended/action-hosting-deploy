@@ -5,6 +5,8 @@ import {
   deployProductionSite,
   ProductionDeployConfig,
   ProductionSuccessResult,
+  RemovalSuccessResult,
+  removePreview,
 } from "../src/deploy";
 import * as exec from "@actions/exec";
 import {
@@ -13,6 +15,7 @@ import {
   channelSingleSiteSuccess,
   liveDeployMultiSiteSuccess,
   liveDeploySingleSiteSuccess,
+  removeDeploymentSuccess,
 } from "./samples/cliOutputs";
 
 const baseChannelDeployConfig: DeployConfig = {
@@ -47,15 +50,20 @@ async function fakeExec(
   }
 
   const isChannelDeploy = args[0] === "hosting:channel:deploy";
+  const isChannelRemove = args[0] === "hosting:channel:delete";
   let successOutput;
 
   if (args.includes("--target")) {
     successOutput = isChannelDeploy
       ? channelMultiSiteSuccess
+      : isChannelRemove
+      ? removeDeploymentSuccess
       : liveDeployMultiSiteSuccess;
   } else {
     successOutput = isChannelDeploy
       ? channelSingleSiteSuccess
+      : isChannelRemove
+      ? removeDeploymentSuccess
       : liveDeploySingleSiteSuccess;
   }
 
@@ -149,5 +157,45 @@ describe("deploy", () => {
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting");
     });
+  });
+});
+
+describe("remove deployment when a pr closes", () => {
+  it("calls exec and interprets the output", async () => {
+    // @ts-ignore read-only property
+    exec.exec = jest.fn(fakeExec);
+
+    const removeOutput: RemovalSuccessResult = (await removePreview(
+      "my-file",
+      baseChannelDeployConfig
+    )) as RemovalSuccessResult;
+
+    expect(exec.exec).toBeCalled();
+    expect(removeOutput).toEqual(removeDeploymentSuccess);
+
+    // Check the arguments that exec was called with
+    // @ts-ignore Jest adds a magic "mock" property
+    const args = exec.exec.mock.calls;
+    const removeFlags = args[0][1];
+    expect(removeFlags).toContain("hosting:channel:delete");
+  });
+
+  it("specifies a target when one is provided", async () => {
+    // @ts-ignore read-only property
+    exec.exec = jest.fn(fakeExec);
+
+    const config: DeployConfig = {
+      ...baseChannelDeployConfig,
+      target: "my-second-site",
+    };
+
+    await deployPreview("my-file", config);
+
+    // Check the arguments that exec was called with
+    // @ts-ignore Jest adds a magic "mock" property
+    const args = exec.exec.mock.calls;
+    const deployFlags = args[0][1];
+    expect(deployFlags).toContain("--only");
+    expect(deployFlags).toContain("my-second-site");
   });
 });
