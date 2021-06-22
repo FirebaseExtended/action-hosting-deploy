@@ -40,9 +40,8 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
-const googleApplicationCredentials = getInput("firebaseServiceAccount", {
-  required: true,
-});
+const googleApplicationCredentials = getInput("firebaseServiceAccount");
+const firebaseCIToken = getInput("firebaseCIToken");
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
@@ -80,15 +79,26 @@ async function run() {
     endGroup();
 
     startGroup("Setting up CLI credentials");
-    const gacFilename = await createGacFile(googleApplicationCredentials);
-    console.log(
-      "Created a temporary file with Application Default Credentials."
-    );
+    let credentialInfo = "";
+    if (googleApplicationCredentials) {
+      console.log("Google Application Credential is being used.");
+      credentialInfo = await createGacFile(googleApplicationCredentials);
+      console.log(
+        "Created a temporary file with Application Default Credentials."
+      );
+    } else if (firebaseCIToken) {
+      console.log("Firebase CI token is being used.");
+      credentialInfo = firebaseCIToken;
+    } else {
+      throw Error(
+        "either googleApplicationCredential or firebaseCIToken needs to be set"
+      );
+    }
     endGroup();
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
-      const deployment = await deployProductionSite(gacFilename, {
+      const deployment = await deployProductionSite(credentialInfo, {
         projectId,
         target,
       });
@@ -113,7 +123,7 @@ async function run() {
     const channelId = getChannelId(configuredChannelId, context);
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
-    const deployment = await deployPreview(gacFilename, {
+    const deployment = await deployPreview(credentialInfo, {
       projectId,
       expires,
       channelId,

@@ -26,8 +26,11 @@ inputs:
     description: "The GITHUB_TOKEN secret"
     required: false
   firebaseServiceAccount:
-    description: "Firebase service account JSON"
-    required: true
+    description: "Firebase service account JSON. Either this or firebaseCIToken must be set."
+    required: false
+  firebaseCIToken:
+    description: "The token generated from firebase login:ci. Either this or firebaseServiceAccount must be set."
+    required: false
   expires:
     description: "How long should a preview live? See the preview channels docs for options"
     default: "7d"
