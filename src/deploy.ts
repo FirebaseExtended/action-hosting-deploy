@@ -74,6 +74,11 @@ async function execWithCredentials(
 ) {
   let deployOutputBuf: Buffer[] = [];
 
+  // This assumes that no generated token will end with .json.
+  let credentialToProcess = gacFilename.endsWith(".json")
+    ? { GOOGLE_APPLICATION_CREDENTIALS: gacFilename }
+    : { FIREBASE_TOKEN: gacFilename };
+
   try {
     await exec(
       "npx firebase-tools",
@@ -93,7 +98,7 @@ async function execWithCredentials(
         env: {
           ...process.env,
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
+          ...credentialToProcess, // the CLI will automatically authenticate with this env variable set
         },
       }
     );
