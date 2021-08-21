@@ -49,10 +49,12 @@ inputs:
       for more information about deploy targets."
     required: false
   entryPoint:
-    description:
-      "The location of your firebase.json file, relative to the root of your
-      directory"
+    description: "The location of your project directory relative to the root of your repository."
     default: "."
+    required: false
+  config:
+    description: "The name of Firebase Hosting configuration file"
+    default: "firebase.json"
     required: false
 outputs:
   urls:
