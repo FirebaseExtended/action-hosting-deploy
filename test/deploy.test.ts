@@ -126,6 +126,25 @@ describe("deploy", () => {
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("my-second-site");
     });
+
+    it("specifies a config file name", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExec);
+
+      const config: DeployConfig = {
+        ...baseChannelDeployConfig,
+        config: "my-firebase.json",
+      };
+
+      await deployPreview("my-file", config);
+
+      // Check the arguments that exec was called with
+      // @ts-ignore Jest adds a magic "mock" property
+      const args = exec.exec.mock.calls;
+      const deployFlags = args[0][1];
+      expect(deployFlags).toContain("--config");
+      expect(deployFlags).toContain("my-firebase.json");
+    });
   });
 
   describe("deploy to live channel", () => {
