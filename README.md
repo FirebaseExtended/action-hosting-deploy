@@ -141,7 +141,7 @@ for more information about deploy targets.
 
 ### `entryPoint` _{string}_
 
-The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
+The directory containing your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
 ## Outputs
