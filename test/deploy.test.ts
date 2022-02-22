@@ -175,7 +175,7 @@ describe("deploy", () => {
 
       const deployOutput: ProductionSuccessResult = (await deployProductionSite(
         "my-file",
-        { 
+        {
           ...baseLiveDeployConfig,
           target: "my-second-site",
         }
@@ -192,14 +192,14 @@ describe("deploy", () => {
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting:my-second-site");
     });
-    
+
     it("supports the configFile option", async () => {
       // @ts-ignore read-only property
       exec.exec = jest.fn(fakeExec);
 
       const deployOutput: ProductionSuccessResult = (await deployProductionSite(
         "my-file",
-        { 
+        {
           ...baseLiveDeployConfig,
           configFile: "./firebase.live.json",
         }

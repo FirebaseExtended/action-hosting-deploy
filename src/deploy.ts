@@ -153,7 +153,7 @@ export async function deployProductionSite(
     [
       "deploy",
       ...(configFile ? ["--config", configFile] : []),
-      "--only", 
+      "--only",
       `hosting${target ? ":" + target : ""}`,
     ],
     projectId,
