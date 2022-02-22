@@ -126,6 +126,25 @@ describe("deploy", () => {
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("my-second-site");
     });
+
+    it("specifies the config file when one is provided", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExec);
+
+      const config: DeployConfig = {
+        ...baseChannelDeployConfig,
+        configFile: "./firebase.other.json",
+      };
+
+      await deployPreview("my-file", config);
+
+      // Check the arguments that exec was called with
+      // @ts-ignore Jest adds a magic "mock" property
+      const args = exec.exec.mock.calls;
+      const deployFlags = args[0][1];
+      expect(deployFlags).toContain("--config");
+      expect(deployFlags).toContain("./firebase.other.json");
+    });
   });
 
   describe("deploy to live channel", () => {
@@ -148,6 +167,56 @@ describe("deploy", () => {
       expect(deployFlags).toContain("deploy");
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting");
+    });
+
+    it("supports the target option", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExec);
+
+      const deployOutput: ProductionSuccessResult = (await deployProductionSite(
+        "my-file",
+        { 
+          ...baseLiveDeployConfig,
+          target: "my-second-site",
+        }
+      )) as ProductionSuccessResult;
+
+      expect(exec.exec).toBeCalled();
+      expect(deployOutput).toEqual(liveDeploySingleSiteSuccess);
+
+      // Check the arguments that exec was called with
+      // @ts-ignore Jest adds a magic "mock" property
+      const args = exec.exec.mock.calls;
+      const deployFlags = args[0][1];
+      expect(deployFlags).toContain("deploy");
+      expect(deployFlags).toContain("--only");
+      expect(deployFlags).toContain("hosting:my-second-site");
+    });
+    
+    it("supports the configFile option", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExec);
+
+      const deployOutput: ProductionSuccessResult = (await deployProductionSite(
+        "my-file",
+        { 
+          ...baseLiveDeployConfig,
+          configFile: "./firebase.live.json",
+        }
+      )) as ProductionSuccessResult;
+
+      expect(exec.exec).toBeCalled();
+      expect(deployOutput).toEqual(liveDeploySingleSiteSuccess);
+
+      // Check the arguments that exec was called with
+      // @ts-ignore Jest adds a magic "mock" property
+      const args = exec.exec.mock.calls;
+      const deployFlags = args[0][1];
+      expect(deployFlags).toContain("deploy");
+      expect(deployFlags).toContain("--only");
+      expect(deployFlags).toContain("hosting");
+      expect(deployFlags).toContain("--config");
+      expect(deployFlags).toContain("./firebase.live.json");
     });
   });
 });

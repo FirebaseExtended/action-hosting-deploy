@@ -50,9 +50,15 @@ inputs:
     required: false
   entryPoint:
     description:
-      "The location of your firebase.json file, relative to the root of your
+      "The base folder location for your firebase.json file, relative to the root of your
       directory"
     default: "."
+    required: false
+  configFile:
+    description:
+      "The file path of your firebase.json file, relative to the entryPoint folder.
+      This will be passed as the --config option to the firebase cli."
+    default: "./firebase.json"
     required: false
 outputs:
   urls:
