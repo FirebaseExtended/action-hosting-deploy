@@ -133,7 +133,7 @@ describe("deploy", () => {
 
       const config: DeployConfig = {
         ...baseChannelDeployConfig,
-        configFile: "./firebase.other.json",
+        configFileName: "firebase.other.json",
       };
 
       await deployPreview("my-file", config);
@@ -143,7 +143,7 @@ describe("deploy", () => {
       const args = exec.exec.mock.calls;
       const deployFlags = args[0][1];
       expect(deployFlags).toContain("--config");
-      expect(deployFlags).toContain("./firebase.other.json");
+      expect(deployFlags).toContain("firebase.other.json");
     });
   });
 
@@ -193,7 +193,7 @@ describe("deploy", () => {
       expect(deployFlags).toContain("hosting:my-second-site");
     });
 
-    it("supports the configFile option", async () => {
+    it("supports the configFileName option", async () => {
       // @ts-ignore read-only property
       exec.exec = jest.fn(fakeExec);
 
@@ -201,7 +201,7 @@ describe("deploy", () => {
         "my-file",
         {
           ...baseLiveDeployConfig,
-          configFile: "./firebase.live.json",
+          configFileName: "firebase.live.json",
         }
       )) as ProductionSuccessResult;
 
@@ -216,7 +216,7 @@ describe("deploy", () => {
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting");
       expect(deployFlags).toContain("--config");
-      expect(deployFlags).toContain("./firebase.live.json");
+      expect(deployFlags).toContain("firebase.live.json");
     });
   });
 });

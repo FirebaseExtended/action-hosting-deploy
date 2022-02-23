@@ -144,10 +144,10 @@ for more information about deploy targets.
 The directory containing your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
-### `configFile` _{string}_
+### `configFileName` _{string}_
 
-The file path of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
-file relative to the entryPoint folder. Defaults to `./firebase.json`.
+The file name of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
+file relative to the entryPoint folder. Defaults to `firebase.json`.
 
 ## Outputs
 
