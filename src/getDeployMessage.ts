@@ -26,11 +26,16 @@ export function getDeployMessage(
 ): string | undefined {
   if (messageInput + "" === "false") return undefined;
 
+  if (messageInput === "") {
+    console.log(`The message provided was empty.`);
+    return undefined;
+  }
+
   if (messageInput + "" === "true") {
-    const commitMessage: string = ghContext.payload.head_commit?.message;
+    const commitMessage: string = ghContext.payload?.head_commit?.message;
     if (commitMessage) {
       // Firebase only accepts messages up to 255 characters long
-      return commitMessage.slice(0, 255);
+      return commitMessage.trim().slice(0, 255).trim();
     } else {
       console.log(
         `Head commit did not contain any message. Manually provide a message instead.`
@@ -39,16 +44,11 @@ export function getDeployMessage(
     }
   }
 
-  if (messageInput === "") {
-    console.log(`The message provided was empty.`);
-    return undefined;
-  }
-
   if (messageInput.length > 255) {
     console.log(
       `Firebase only accepts messages up to 255 characters long. Your provided message will be capped at 255.`
     );
   }
 
-  return messageInput.slice(0, 255);
+  return messageInput.trim().slice(0, 255).trim();
 }
