@@ -54,6 +54,11 @@ inputs:
       directory"
     default: "."
     required: false
+  message:
+    description:
+      "The deploy message. If provided with 'true', the head commit message will be used,
+      otherwise the provided message will be used unless empty or 'false'."
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to
