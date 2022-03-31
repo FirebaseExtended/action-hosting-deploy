@@ -32,6 +32,7 @@ import {
   interpretChannelDeployResult,
 } from "./deploy";
 import { getChannelId } from "./getChannelId";
+import { getDeployMessage } from "./getDeployMessage";
 import {
   getURLsMarkdownFromChannelDeployResult,
   postChannelSuccessComment,
@@ -40,6 +41,8 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
+const inputMessage = getInput("message");
+const message = getDeployMessage(inputMessage, context);
 const googleApplicationCredentials = getInput("firebaseServiceAccount", {
   required: true,
 });
@@ -91,6 +94,7 @@ async function run() {
       const deployment = await deployProductionSite(gacFilename, {
         projectId,
         target,
+        message,
       });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
@@ -118,6 +122,7 @@ async function run() {
       expires,
       channelId,
       target,
+      message,
     });
 
     if (deployment.status === "error") {

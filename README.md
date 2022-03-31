@@ -144,6 +144,11 @@ for more information about deploy targets.
 The directory containing your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
+### `message` _{string}_
+
+The deploy message. If provided with 'true', the head commit message will be used,
+otherwise the provided message will be used unless empty or 'false'.
+
 ## Outputs
 
 Values emitted by this action that can be consumed by other actions later in your workflow
