@@ -59,7 +59,7 @@ ${urlList}
 
 <sub>(expires ${new Date(expireTime).toUTCString()})</sub>
 
-<sub>(target ${target})</sub>
+<sub>(target ${target ?? "default"})</sub>
 
 ${BOT_SIGNATURE}
 
