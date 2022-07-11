@@ -50,6 +50,7 @@ export function getChannelDeploySuccessComment(
   const deploySignature = createDeploySignature(result);
   const urlList = getURLsMarkdownFromChannelDeployResult(result);
   const { expireTime } = interpretChannelDeployResult(result);
+  const { target } = interpretChannelDeployResult(result);
 
   return `
 Visit the preview URL for this PR (updated for commit ${commit}):
@@ -57,6 +58,8 @@ Visit the preview URL for this PR (updated for commit ${commit}):
 ${urlList}
 
 <sub>(expires ${new Date(expireTime).toUTCString()})</sub>
+
+<sub>(target ${target})</sub>
 
 ${BOT_SIGNATURE}
 
