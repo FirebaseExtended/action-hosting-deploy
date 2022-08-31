@@ -19,6 +19,7 @@ import { exec } from "@actions/exec";
 export type SiteDeploy = {
   site: string;
   target?: string;
+  functions?: string;
   url: string;
   expireTime: string;
 };
@@ -45,11 +46,13 @@ export type DeployConfig = {
   expires: string;
   channelId: string;
   target?: string;
+  functions?: string;
 };
 
 export type ProductionDeployConfig = {
   projectId: string;
   target?: string;
+  functions?: string;
 };
 
 export function interpretChannelDeployResult(
@@ -144,10 +147,10 @@ export async function deployProductionSite(
   gacFilename,
   productionDeployConfig: ProductionDeployConfig
 ) {
-  const { projectId, target } = productionDeployConfig;
+  const { projectId, target, functions } = productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
-    ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
+    ["deploy", "--only", `hosting${target ? ":" + target : ""}${functions ? ",function:" + functions : ""}`],
     projectId,
     gacFilename
   );

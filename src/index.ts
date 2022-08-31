@@ -49,6 +49,7 @@ const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
+const functions = getInput("functions");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -91,6 +92,7 @@ async function run() {
       const deployment = await deployProductionSite(gacFilename, {
         projectId,
         target,
+        functions,
       });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
