@@ -80,6 +80,7 @@ async function execWithCredentials(
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
+        "--only",
         debug
           ? "--debug" // gives a more thorough error message
           : "--json", // allows us to easily parse the output
