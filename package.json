@@ -35,5 +35,6 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged && npm run build"
     }
-  }
+  },
+  "version": "0.7.0"
 }
