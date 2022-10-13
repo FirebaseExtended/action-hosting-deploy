@@ -34,4 +34,5 @@ jobs:
       - name: Verify firebase tools version
         run: |
           npx firebase-tools --version
+          echo ${{steps.firebase_hosting_preview}}
           test "$(npx firebase-tools --version)" = "11.12.0"
