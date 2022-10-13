@@ -144,6 +144,10 @@ for more information about deploy targets.
 The directory containing your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
 
+### `firebaseToolsVersion` _{string}_
+
+The version of `firebase-tools` to use. If not specified, defaults to `latest`.
+
 ## Outputs
 
 Values emitted by this action that can be consumed by other actions later in your workflow
