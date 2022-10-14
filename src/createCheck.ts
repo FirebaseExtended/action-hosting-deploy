@@ -21,7 +21,7 @@ export async function createCheck(
   github: InstanceType<typeof GitHub>,
   context: Context
 ) {
-  const check = await github.checks.create({
+  const check = await github.rest.checks.create({
     ...context.repo,
     name: "Deploy Preview",
     head_sha: context.payload.pull_request?.head.sha,
@@ -29,7 +29,7 @@ export async function createCheck(
   });
 
   return async (details: Object) => {
-    await github.checks.update({
+    await github.rest.checks.update({
       ...context.repo,
       check_run_id: check.data.id,
       completed_at: new Date().toISOString(),
