@@ -1,4 +1,5 @@
-export const multiSiteComment = `Visit the preview URL for this PR (updated for commit fe211ff):
+export const multiSiteComment =
+  `Visit the preview URL for this PR (updated for commit fe211ff):
 
 - [https://action-hosting-deploy-demo--multisite-test-goqvngto.web.app](https://action-hosting-deploy-demo--multisite-test-goqvngto.web.app)
 - [https://action-hosting-deploy-demo-2--multisite-test-ksadajci.web.app](https://action-hosting-deploy-demo-2--multisite-test-ksadajci.web.app)
@@ -9,7 +10,8 @@ export const multiSiteComment = `Visit the preview URL for this PR (updated for 
 
 <sub>Sign: 980f04126fb629deaadace7d6ee8a0628942e3d3</sub>`.trim();
 
-export const singleSiteComment = `Visit the preview URL for this PR (updated for commit fe211ff):
+export const singleSiteComment =
+  `Visit the preview URL for this PR (updated for commit fe211ff):
 
 [https://action-hosting-deploy-demo--singlesite-test-jl98rmie.web.app](https://action-hosting-deploy-demo--singlesite-test-jl98rmie.web.app)
 

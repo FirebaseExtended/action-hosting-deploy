@@ -127,13 +127,8 @@ export async function deployPreview(
   gacFilename: string,
   deployConfig: ChannelDeployConfig
 ) {
-  const {
-    projectId,
-    channelId,
-    target,
-    expires,
-    firebaseToolsVersion,
-  } = deployConfig;
+  const { projectId, channelId, target, expires, firebaseToolsVersion } =
+    deployConfig;
 
   const deploymentText = await execWithCredentials(
     [
