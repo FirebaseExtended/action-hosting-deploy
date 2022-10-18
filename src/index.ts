@@ -45,7 +45,7 @@ const googleApplicationCredentials = getInput("firebaseServiceAccount", {
 });
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
-const token = process.env.GITHUB_TOKEN || getInput("repoToken");
+const token = getInput("repoToken") || process.env.GITHUB_TOKEN;
 const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
