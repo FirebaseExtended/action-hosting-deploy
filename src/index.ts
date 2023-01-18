@@ -49,6 +49,7 @@ const token = process.env.GITHUB_TOKEN || getInput("repoToken");
 const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
+const configFileName = getInput("configFileName");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 
 async function run() {
@@ -71,11 +72,14 @@ async function run() {
       }
     }
 
-    if (existsSync("./firebase.json")) {
-      console.log("firebase.json file found. Continuing deploy.");
+    const firebaseConfigFile = `./${configFileName || "firebase.json"}`;
+    if (existsSync(firebaseConfigFile)) {
+      console.log(firebaseConfigFile + " file found. Continuing deploy.");
     } else {
       throw Error(
-        "firebase.json file not found. If your firebase.json file is not in the root of your repo, edit the entryPoint option of this GitHub action."
+        firebaseConfigFile +
+          " file not found. If your configuration file is not in the root of your repo then " +
+          "edit the entryPoint option of this GitHub action or set the correct name of the config file relative to the entryPoint."
       );
     }
     endGroup();
@@ -92,6 +96,7 @@ async function run() {
       const deployment = await deployProductionSite(gacFilename, {
         projectId,
         target,
+        configFileName,
         firebaseToolsVersion,
       });
       if (deployment.status === "error") {
@@ -120,6 +125,7 @@ async function run() {
       expires,
       channelId,
       target,
+      configFileName,
       firebaseToolsVersion,
     });
 
