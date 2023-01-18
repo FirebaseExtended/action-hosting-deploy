@@ -1,6 +1,6 @@
 import {
   ChannelSuccessResult,
-  DeployConfig,
+  ChannelDeployConfig,
   deployPreview,
   deployProductionSite,
   ProductionDeployConfig,
@@ -15,10 +15,10 @@ import {
   liveDeploySingleSiteSuccess,
 } from "./samples/cliOutputs";
 
-const baseChannelDeployConfig: DeployConfig = {
+const baseChannelDeployConfig: ChannelDeployConfig = {
+  projectId: "my-project",
   channelId: "my-channel",
   expires: undefined,
-  projectId: "my-project",
 };
 
 const baseLiveDeployConfig: ProductionDeployConfig = {
@@ -112,7 +112,7 @@ describe("deploy", () => {
       // @ts-ignore read-only property
       exec.exec = jest.fn(fakeExec);
 
-      const config: DeployConfig = {
+      const config: ChannelDeployConfig = {
         ...baseChannelDeployConfig,
         target: "my-second-site",
       };
