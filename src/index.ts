@@ -40,7 +40,7 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
-const enableComment = getInput("addComment");
+const addComment = getInput("addComment") === "true";
 const googleApplicationCredentials = getInput("firebaseServiceAccount", {
   required: true,
 });
@@ -140,7 +140,7 @@ async function run() {
         ? `[${urls[0]}](${urls[0]})`
         : urls.map((url) => `- [${url}](${url})`).join("\n");
 
-    if (token && isPullRequest && !!octokit && enableComment) {
+    if (token && isPullRequest && !!octokit && addComment) {
       const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
 
       await postChannelSuccessComment(octokit, context, deployment, commitId);

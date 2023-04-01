@@ -34,7 +34,7 @@ inputs:
     required: false
   addComment:
     description: "Add comment on pull request with preview URL"
-    default: true
+    default: "true"
     required: false
   projectId:
     description:
