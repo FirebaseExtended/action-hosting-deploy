@@ -168,3 +168,23 @@ export async function deployProductionSite(
 
   return deploymentResult;
 }
+
+export async function deployFunctions(
+  gacFilename,
+  productionDeployConfig: ProductionDeployConfig
+) {
+  const { projectId, firebaseToolsVersion } = productionDeployConfig;
+
+  const deploymentText = await execWithCredentials(
+    ["deploy", "--only", `functions`],
+    projectId,
+    gacFilename,
+    { firebaseToolsVersion }
+  );
+
+  const deploymentResult = JSON.parse(deploymentText) as
+    | ProductionSuccessResult
+    | ErrorResult;
+
+  return deploymentResult;
+}
