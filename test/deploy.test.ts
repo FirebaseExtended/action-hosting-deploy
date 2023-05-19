@@ -1,6 +1,7 @@
 import {
   ChannelSuccessResult,
   ChannelDeployConfig,
+  deployFunctions,
   deployPreview,
   deployProductionSite,
   ProductionDeployConfig,
@@ -148,6 +149,29 @@ describe("deploy", () => {
       expect(deployFlags).toContain("deploy");
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting");
+    });
+  });
+
+  describe("deploy functions", () => {
+    it("calls exec and interprets the output", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExec);
+
+      const deployOutput: ProductionSuccessResult = (await deployFunctions(
+        "my-file",
+        baseLiveDeployConfig
+      )) as ProductionSuccessResult;
+
+      expect(exec.exec).toBeCalled();
+      expect(deployOutput).toEqual(liveDeploySingleSiteSuccess);
+
+      // Check the arguments that exec was called with
+      // @ts-ignore Jest adds a magic "mock" property
+      const args = exec.exec.mock.calls;
+      const deployFlags = args[0][1];
+      expect(deployFlags).toContain("deploy");
+      expect(deployFlags).toContain("--only");
+      expect(deployFlags).toContain("functions");
     });
   });
 });
