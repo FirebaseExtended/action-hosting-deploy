@@ -133,6 +133,7 @@ async function run() {
     setOutput("urls", urls);
     setOutput("expire_time", expireTime);
     setOutput("details_url", urls[0]);
+    setOutput("channel_id", channelId);
 
     const urlsListMarkdown =
       urls.length === 1

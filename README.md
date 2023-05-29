@@ -164,6 +164,10 @@ The time the deployed preview urls expire
 
 A single URL that was deployed to
 
+### `channel_id`
+
+The channel id the action used to deploy
+
 ## Status
 
 ![Status: Experimental](https://img.shields.io/badge/Status-Experimental-blue)

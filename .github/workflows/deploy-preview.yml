@@ -35,3 +35,4 @@ jobs:
           echo urls ${{steps.firebase_hosting_preview.outputs.url}}
           echo expire_time ${{steps.firebase_hosting_preview.outputs.expire_time}}
           echo details_url ${{steps.firebase_hosting_preview.outputs.details_url}}
+          echo channel_id ${{steps.firebase_hosting_preview.outputs.channel_id}}
