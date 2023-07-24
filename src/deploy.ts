@@ -77,6 +77,11 @@ async function execWithCredentials(
   let deployOutputBuf: Buffer[] = [];
   const debug = opts.debug || false;
   const firebaseToolsVersion = opts.firebaseToolsVersion || "latest";
+  const env = {
+    ...process.env,
+    FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
+  };
+  if(gacFilename) env['GOOGLE_APPLICATION_CREDENTIALS'] = gacFilename; // the CLI will automatically authenticate with this env variable set
 
   try {
     await exec(
@@ -94,11 +99,7 @@ async function execWithCredentials(
             deployOutputBuf.push(data);
           },
         },
-        env: {
-          ...process.env,
-          FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
-        },
+        env: env,
       }
     );
   } catch (e) {
