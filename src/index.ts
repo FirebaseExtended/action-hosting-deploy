@@ -78,12 +78,19 @@ async function run() {
     }
     endGroup();
 
-    startGroup("Setting up CLI credentials");
-    const gacFilename = process.env.GOOGLE_APPLICATION_CREDENTIALS || await createGacFile(googleApplicationCredentials);
-    console.log(
-      "Created a temporary file with Application Default Credentials."
-    );
-    endGroup();
+    let gacFilename;
+    if (googleApplicationCredentials) {
+      startGroup("Setting up CLI credentials");
+      gacFilename = await createGacFile(googleApplicationCredentials);
+      console.log(
+        "Created a temporary file with Application Default Credentials."
+      );
+      endGroup();
+    } else if(!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+      throw Error(
+        "Unable to authenticate. Please specify 'firebaseServiceAccount' or make sure 'GOOGLE_APPLICATION_CREDENTIALS' environment variable is set."
+      );
+    }
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
