@@ -40,9 +40,7 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
-const googleApplicationCredentials = getInput("firebaseServiceAccount", {
-  required: true,
-});
+const googleApplicationCredentials = getInput("firebaseServiceAccount");
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
@@ -81,7 +79,7 @@ async function run() {
     endGroup();
 
     startGroup("Setting up CLI credentials");
-    const gacFilename = await createGacFile(googleApplicationCredentials);
+    const gacFilename = process.env.GOOGLE_APPLICATION_CREDENTIALS || await createGacFile(googleApplicationCredentials);
     console.log(
       "Created a temporary file with Application Default Credentials."
     );
