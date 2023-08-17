@@ -115,6 +115,11 @@ async function run() {
           summary: `[${hostname}](${url})`,
         },
       });
+
+      setOutput("urls", [url]);
+      setOutput("expire_time", undefined);
+      setOutput("details_url", url);
+
       return;
     }
 
