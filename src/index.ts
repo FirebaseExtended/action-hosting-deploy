@@ -36,6 +36,7 @@ import {
   getURLsMarkdownFromChannelDeployResult,
   postChannelSuccessComment,
 } from "./postOrUpdateComment";
+import { getProjectIdByAlias } from "./getProjectIdByAlias";
 
 // Inputs defined in action.yml
 const expires = getInput("expires");
@@ -99,8 +100,11 @@ async function run() {
       }
       endGroup();
 
-      const hostname = target ? `${target}.web.app` : `${projectId}.web.app`;
+      // Try to get the project id from an project alias
+      const parsedProjectId = getProjectIdByAlias(projectId) || projectId;
+      const hostname = target ? `${target}.web.app` : `${parsedProjectId}.web.app`;
       const url = `https://${hostname}/`;
+
       await finish({
         details_url: url,
         conclusion: "success",
