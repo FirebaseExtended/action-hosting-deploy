@@ -100,9 +100,11 @@ async function run() {
       }
       endGroup();
 
-      // Try to get the project id from an project alias
+      // ProjectId may be an alias. Try to get the real project id from .firebaserc
       const parsedProjectId = getProjectIdByAlias(projectId) || projectId;
-      const hostname = target ? `${target}.web.app` : `${parsedProjectId}.web.app`;
+      const hostname = target
+        ? `${target}.web.app`
+        : `${parsedProjectId}.web.app`;
       const url = `https://${hostname}/`;
 
       await finish({
