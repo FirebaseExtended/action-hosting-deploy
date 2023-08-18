@@ -40,6 +40,7 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
+const force = getInput("force") === "true";
 const googleApplicationCredentials = getInput("firebaseServiceAccount", {
   required: true,
 });
@@ -119,6 +120,7 @@ async function run() {
       projectId,
       expires,
       channelId,
+      force,
       target,
       firebaseToolsVersion,
     });

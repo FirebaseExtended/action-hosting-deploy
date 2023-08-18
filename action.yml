@@ -59,6 +59,12 @@ inputs:
       The version of firebase-tools to use. Defaults to `latest`.
     default: latest
     required: false
+  force:
+    description: >-
+      Force deployment even if specs implies a billing impact (SSR functions typically).
+      Defaults to `false`.
+    default: false
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to

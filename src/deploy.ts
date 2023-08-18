@@ -50,6 +50,7 @@ type DeployConfig = {
 export type ChannelDeployConfig = DeployConfig & {
   expires: string;
   channelId: string;
+  force: boolean;
 };
 
 export type ProductionDeployConfig = DeployConfig & {};
@@ -127,7 +128,7 @@ export async function deployPreview(
   gacFilename: string,
   deployConfig: ChannelDeployConfig
 ) {
-  const { projectId, channelId, target, expires, firebaseToolsVersion } =
+  const { projectId, channelId, target, expires, firebaseToolsVersion, force } =
     deployConfig;
 
   const deploymentText = await execWithCredentials(
@@ -136,6 +137,7 @@ export async function deployPreview(
       channelId,
       ...(target ? ["--only", target] : []),
       ...(expires ? ["--expires", expires] : []),
+      ...(force ? ["--force"] : []),
     ],
     projectId,
     gacFilename,

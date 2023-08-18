@@ -148,6 +148,10 @@ file relative to the root of your repository. Defaults to `.` (the root of your 
 
 The version of `firebase-tools` to use. If not specified, defaults to `latest`.
 
+### `force` _{boolean}_
+
+The `force` command line argument for `firebase deploy`. Defaults to `false`.
+
 ## Outputs
 
 Values emitted by this action that can be consumed by other actions later in your workflow
