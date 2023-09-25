@@ -9,7 +9,7 @@
     "@actions/github": "^5.1.1",
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
-    "@babel/preset-typescript": "^7.21.4",
+    "@babel/preset-typescript": "^7.23.0",
     "@tsconfig/node12": "^1.0.11",
     "@types/jest": "^29.5.1",
     "@types/tmp": "^0.2.3",
