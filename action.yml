@@ -59,6 +59,32 @@ inputs:
       The version of firebase-tools to use. Defaults to `latest`.
     default: latest
     required: false
+  # Add a new parameter means wether the user need to see the updated urls
+  # after the deployment.
+  showDetailedUrls:
+    description: >-
+      Show the updated urls after the deployment.
+    default: false
+    required: false
+  # Add a file extension filter set to keep the undertacked files shows on the detailed urls.
+  # Default to md and html
+  fileExtensionFilter:
+    description: >-
+      The file extension filter set to keep the undertacked files shows on the detailed urls.
+    default: "md, html"
+    required: false
+  # Add a cusomized path replacement to replace the path in the detailed urls.
+  # Like: src/ to /public/
+  originalPath:
+    description: >-
+      The original path to be replaced in the detailed urls.
+    default: "src/"
+    required: false
+  replacedPath:
+    description: >-
+      The replaced path in the detailed urls.
+    default: "docs/"
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to

@@ -23,9 +23,39 @@ import {
   ErrorResult,
 } from "./deploy";
 import { createDeploySignature } from "./hash";
+import { getInput } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 
-const BOT_SIGNATURE =
-  "<sub>🔥 via [Firebase Hosting GitHub Action](https://github.com/marketplace/actions/deploy-to-firebase-hosting) 🌎</sub>";
+// Get inputs from workflow file
+const showDetailedUrls = getInput("showDetailedUrls");
+const fileExtension = getInput("fileExtension") || "md, html";
+const originalPath = getInput("originalPath") || "src";
+const replacedPath = getInput("replacedPath") || "docs";
+
+const BOT_SIGNATURE = "[本工具](https://github.com/cfug/doc-site-preview-in-pr) 修改自 [部署至 🔥 Firebase Hosting](https://github.com/marketplace/actions/deploy-to-firebase-hosting)。";
+
+export async function getChangedFilesByPullRequestNumber(pullRequestNumber: number): Promise<string[]> {
+  const token = process.env.GITHUB_TOKEN || getInput("repoToken");
+  const octokit = token ? getOctokit(token) : undefined;
+  const { data: files } = await octokit.rest.pulls.listFiles({
+    ...context.repo,
+    pull_number: pullRequestNumber,
+  });
+  const fileExtensions = fileExtension.split(",").map((ext) => ext.trim());  // 过滤空格
+  const prChangedFiles = files
+    .filter((file) => {
+      const extension = file.filename.split(".").pop();
+      return fileExtensions.includes(extension);
+    })
+    .map((file) => file.filename);
+
+  const replacedPathRegex = new RegExp(`^${originalPath}`);
+  const prChangedFilesWithCustomizedPath = prChangedFiles.map((filePath) => {
+    return filePath.replace(replacedPathRegex, replacedPath);
+  });
+
+  return prChangedFilesWithCustomizedPath;
+}
 
 export function createBotCommentIdentifier(signature: string) {
   return function isCommentByBot(comment): boolean {
@@ -43,24 +73,61 @@ export function getURLsMarkdownFromChannelDeployResult(
     : urls.map((url) => `- [${url}](${url})`).join("\n");
 }
 
+export function getURLsFromChannelDeployResult(
+  result: ChannelSuccessResult
+): string[] {
+  const { urls } = interpretChannelDeployResult(result);
+  return urls;
+}
+
 export function getChannelDeploySuccessComment(
   result: ChannelSuccessResult,
-  commit: string
+  commit: string,
+  changedFiles: string[]
 ) {
   const deploySignature = createDeploySignature(result);
-  const urlList = getURLsMarkdownFromChannelDeployResult(result);
+  const urlList = getURLsFromChannelDeployResult(result);
   const { expireTime } = interpretChannelDeployResult(result);
 
-  return `
-Visit the preview URL for this PR (updated for commit ${commit}):
+  const changedFilesWithUrls = changedFiles.map((file) => {
+    return `[${urlList}${file}](${urlList}${file})`;
+  }).join("\n");
 
+  const expireTimeInChina = new Date(expireTime).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+  const formattedExpireTime = `${expireTimeInChina} (北京时间)`;
+
+  let commentContents = "";
+  commentContents = `
+👍 感谢你对 Flutter / Dart 文档本地化做出的贡献！\n 
+  
+查看该 PR 的预览 URL (已更新至 commit: ${commit})：
+  
 ${urlList}
-
-<sub>(expires ${new Date(expireTime).toUTCString()})</sub>
-
+  
+### 查看本 PR 贡献的链接预览:
+${changedFilesWithUrls}
+  
+<sub>(页面失效时间 ${formattedExpireTime})</sub>
+  
 ${BOT_SIGNATURE}
+  
+<sub>Sign: ${deploySignature}</sub>`;
+  
+  if (showDetailedUrls == "false") {
+    // Feature Not Enabled
+    commentContents = `
+Visit the preview URL for this PR (updated for commit ${commit}):
+    
+${urlList}
+    
+<sub>(expires ${new Date(expireTime).toUTCString()})</sub>
+    
+${BOT_SIGNATURE}
+    
+<sub>Sign: ${deploySignature}</sub>`
+  }
 
-<sub>Sign: ${deploySignature}</sub>`.trim();
+  return commentContents.trim();
 }
 
 export async function postChannelSuccessComment(
@@ -73,8 +140,12 @@ export async function postChannelSuccessComment(
     ...context.repo,
     issue_number: context.issue.number,
   };
+  const pullRequest = context.payload.pull_request;
+  const pullRequestNumber = pullRequest.number;
 
-  const commentMarkdown = getChannelDeploySuccessComment(result, commit);
+  const changedFiles = await getChangedFilesByPullRequestNumber(pullRequestNumber);
+
+  const commentMarkdown = getChannelDeploySuccessComment(result, commit, changedFiles);
 
   const comment = {
     ...commentInfo,
