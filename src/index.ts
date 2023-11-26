@@ -38,6 +38,7 @@ import {
 } from "./postOrUpdateComment";
 
 // Inputs defined in action.yml
+const packageExecute = getInput("packageExecute", {trimWhitespace: true});
 const expires = getInput("expires");
 const projectId = getInput("projectId");
 const googleApplicationCredentials = getInput("firebaseServiceAccount", {
@@ -90,6 +91,7 @@ async function run() {
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
       const deployment = await deployProductionSite(gacFilename, {
+        packageExecute,
         projectId,
         target,
         firebaseToolsVersion,
@@ -116,6 +118,7 @@ async function run() {
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
     const deployment = await deployPreview(gacFilename, {
+      packageExecute,
       projectId,
       expires,
       channelId,

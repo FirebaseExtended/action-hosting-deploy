@@ -41,6 +41,7 @@ export type ProductionSuccessResult = {
 };
 
 type DeployConfig = {
+  packageExecute?: string;
   projectId: string;
   target?: string;
   // Optional version specification for firebase-tools. Defaults to `latest`.
@@ -72,15 +73,16 @@ async function execWithCredentials(
   args: string[],
   projectId,
   gacFilename,
-  opts: { debug?: boolean; firebaseToolsVersion?: string }
+  opts: { debug?: boolean; firebaseToolsVersion?: string, packageExecute?: string }
 ) {
   let deployOutputBuf: Buffer[] = [];
   const debug = opts.debug || false;
+  const packageExecute = opts.packageExecute || 'npx';
   const firebaseToolsVersion = opts.firebaseToolsVersion || "latest";
 
   try {
     await exec(
-      `npx firebase-tools@${firebaseToolsVersion}`,
+      `${packageExecute} firebase-tools@${firebaseToolsVersion}`,
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
