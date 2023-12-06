@@ -16,6 +16,7 @@
 
 import {
   endGroup,
+  getBooleanInput,
   getInput,
   setFailed,
   setOutput,
@@ -50,6 +51,7 @@ const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
+const debug = getBooleanInput("debug");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -93,6 +95,7 @@ async function run() {
         projectId,
         target,
         firebaseToolsVersion,
+        debug,
       });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
@@ -121,6 +124,7 @@ async function run() {
       channelId,
       target,
       firebaseToolsVersion,
+      debug,
     });
 
     if (deployment.status === "error") {
