@@ -72,6 +72,10 @@ on:
 jobs:
   deploy_live_website:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
     steps:
       - uses: actions/checkout@v2
       # Add any build steps here. For example:
