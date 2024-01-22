@@ -13,7 +13,6 @@ jobs:
       # - run: npm run build
       - uses: ./
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           channelId: live
           projectId: action-hosting-deploy-demo
