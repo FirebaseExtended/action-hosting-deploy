@@ -10,7 +10,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
-      day: "Monday"
+      day: "monday"
   - package-ecosystem: github-actions
     directory: /
     groups:
@@ -19,4 +19,4 @@ updates:
           - "*"  # Group all Actions updates into a single larger pull request
     schedule:
       interval: weekly
-      day: "Monday"
+      day: monday
