@@ -43,7 +43,7 @@ jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Add any build steps here. For example:
       # - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
@@ -73,7 +73,7 @@ jobs:
   deploy_live_website:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Add any build steps here. For example:
       # - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
