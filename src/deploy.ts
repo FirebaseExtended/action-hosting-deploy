@@ -40,17 +40,19 @@ export type ProductionSuccessResult = {
   };
 };
 
-export type DeployConfig = {
+type DeployConfig = {
   projectId: string;
-  expires: string;
-  channelId: string;
   target?: string;
+  // Optional version specification for firebase-tools. Defaults to `latest`.
+  firebaseToolsVersion?: string;
 };
 
-export type ProductionDeployConfig = {
-  projectId: string;
-  target?: string;
+export type ChannelDeployConfig = DeployConfig & {
+  expires: string;
+  channelId: string;
 };
+
+export type ProductionDeployConfig = DeployConfig & {};
 
 export function interpretChannelDeployResult(
   deployResult: ChannelSuccessResult
@@ -72,13 +74,15 @@ async function execWithCredentials(
   args: string[],
   projectId,
   gacFilename,
-  debug: boolean = false
+  opts: { debug?: boolean; firebaseToolsVersion?: string }
 ) {
   let deployOutputBuf: Buffer[] = [];
+  const debug = opts.debug || false;
+  const firebaseToolsVersion = opts.firebaseToolsVersion || "latest";
 
   try {
     await exec(
-      "npx firebase-tools",
+      `npx firebase-tools@${firebaseToolsVersion}`,
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
@@ -103,11 +107,14 @@ async function execWithCredentials(
     console.log(Buffer.concat(deployOutputBuf).toString("utf-8"));
     console.log(e.message);
 
-    if (debug === false) {
+    if (!debug) {
       console.log(
         "Retrying deploy with the --debug flag for better error output"
       );
-      await execWithCredentials(args, projectId, gacFilename, true);
+      await execWithCredentials(args, projectId, gacFilename, {
+        debug: true,
+        firebaseToolsVersion,
+      });
     } else {
       throw e;
     }
@@ -120,9 +127,10 @@ async function execWithCredentials(
 
 export async function deployPreview(
   gacFilename: string,
-  deployConfig: DeployConfig
+  deployConfig: ChannelDeployConfig
 ) {
-  const { projectId, channelId, target, expires } = deployConfig;
+  const { projectId, channelId, target, expires, firebaseToolsVersion } =
+    deployConfig;
 
   const deploymentText = await execWithCredentials(
     [
@@ -132,7 +140,8 @@ export async function deployPreview(
       ...(expires ? ["--expires", expires] : []),
     ],
     projectId,
-    gacFilename
+    gacFilename,
+    { firebaseToolsVersion }
   );
 
   const deploymentResult = JSON.parse(deploymentText.trim()) as
@@ -146,12 +155,13 @@ export async function deployProductionSite(
   gacFilename,
   productionDeployConfig: ProductionDeployConfig
 ) {
-  const { projectId, target } = productionDeployConfig;
+  const { projectId, target, firebaseToolsVersion } = productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
     ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
     projectId,
-    gacFilename
+    gacFilename,
+    { firebaseToolsVersion }
   );
 
   const deploymentResult = JSON.parse(deploymentText) as

@@ -90,7 +90,7 @@ export async function postChannelSuccessComment(
 
   let commentId;
   try {
-    const comments = (await github.issues.listComments(commentInfo)).data;
+    const comments = (await github.rest.issues.listComments(commentInfo)).data;
     for (let i = comments.length; i--; ) {
       const c = comments[i];
       if (isCommentByBot(c)) {
@@ -104,7 +104,7 @@ export async function postChannelSuccessComment(
 
   if (commentId) {
     try {
-      await github.issues.updateComment({
+      await github.rest.issues.updateComment({
         ...context.repo,
         comment_id: commentId,
         body: comment.body,
@@ -116,7 +116,7 @@ export async function postChannelSuccessComment(
 
   if (!commentId) {
     try {
-      await github.issues.createComment(comment);
+      await github.rest.issues.createComment(comment);
     } catch (e) {
       console.log(`Error creating comment: ${e.message}`);
     }
