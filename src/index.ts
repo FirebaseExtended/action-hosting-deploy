@@ -23,7 +23,6 @@ import {
 } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { existsSync } from "fs";
-import { createCheck } from "./createCheck";
 import { createGacFile } from "./createGACFile";
 import {
   deployPreview,
@@ -54,11 +53,6 @@ const disableComment = getInput("disableComment");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
-
-  let finish = (details: Object) => console.log(details);
-  if (token && isPullRequest) {
-    finish = await createCheck(octokit, context);
-  }
 
   try {
     startGroup("Verifying firebase.json exists");
@@ -99,17 +93,6 @@ async function run() {
         throw Error((deployment as ErrorResult).error);
       }
       endGroup();
-
-      const hostname = target ? `${target}.web.app` : `${projectId}.web.app`;
-      const url = `https://${hostname}/`;
-      await finish({
-        details_url: url,
-        conclusion: "success",
-        output: {
-          title: `Production deploy succeeded`,
-          summary: `[${hostname}](${url})`,
-        },
-      });
       return;
     }
 
@@ -146,25 +129,8 @@ async function run() {
 
       await postChannelSuccessComment(octokit, context, deployment, commitId);
     }
-
-    await finish({
-      details_url: urls[0],
-      conclusion: "success",
-      output: {
-        title: `Deploy preview succeeded`,
-        summary: getURLsMarkdownFromChannelDeployResult(deployment),
-      },
-    });
   } catch (e) {
     setFailed(e.message);
-
-    await finish({
-      conclusion: "failure",
-      output: {
-        title: "Deploy preview failed",
-        summary: `Error: ${e.message}`,
-      },
-    });
   }
 }
 
