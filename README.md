@@ -83,6 +83,51 @@ jobs:
           channelId: live
 ```
 
+### Deploy using keyless authentication
+
+Previous options require a service account JSON key to be stored as a string in the repo's "Secrets" area.
+You can authenticate vs. Google Cloud without the need for the JSON key using `auth` action:
+
+```yaml
+name: Deploy to Live Channel
+
+on:
+  push:
+    branches:
+      - main
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/auth@v2
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: ${{ secrets.FIREBASE_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ID }}
+        create_credentials_file: true
+      - name: Read service account JSON into string
+        run: |
+          echo "SA_KEY_JSON=$(cat ${{ steps.auth.outputs.credentials_file_path }})" >> $GITHUB_ENV
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ env.SA_KEY_JSON }}"
+          projectId: your-Firebase-project-ID
+          channelId: live
+```
+
+The step by step instructions can be found in the [Google Cloud Blog post][blog].
+
+The `FIREBASE_SERVICE_ACCOUNT_ID` should be the email of the `FIREBASE_SERVICE_ACCOUNT` service account.
+The `FIREBASE_IDENTITY_PROVIDER` should be the fully qualified resource name of the OIDC identity provider.
+
+[blog]: https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions
+
 ## Options
 
 ### `firebaseServiceAccount` _{string}_ (required)
