@@ -20,11 +20,12 @@ import { writeSync, existsSync } from "fs";
 // Set up Google Application Credentials for use by the Firebase CLI
 // https://cloud.google.com/docs/authentication/production#finding_credentials_automatically
 export async function createGacFile(googleApplicationCredentials: string) {
-  console.debug("processing GAC credentials: " + googleApplicationCredentials)
+  console.log("processing GAC credentials: " + googleApplicationCredentials)
   try {
     if (existsSync(googleApplicationCredentials)) {
       return googleApplicationCredentials;
     }
+    console.log("creating temporary file for credentials...")
   }
   catch (e) {
     console.log("failed to check existence of %s\nerror: %O", googleApplicationCredentials, e)
