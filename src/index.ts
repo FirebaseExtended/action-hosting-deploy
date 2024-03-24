@@ -71,8 +71,10 @@ async function run() {
     endGroup();
 
     startGroup("Setting up CLI credentials");
+    console.log("validating passed credentials: %s", googleApplicationCredentials);
     const gacFilename = await createGacFile(googleApplicationCredentials);
-    if (gacFilename != googleApplicationCredentials) {
+    console.log("generated credentials: %s", gacFilename)
+    if (gacFilename !== googleApplicationCredentials) {
       console.log(
         "Created a temporary file with Application Default Credentials."
       );
