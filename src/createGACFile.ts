@@ -26,6 +26,7 @@ export async function createGacFile(googleApplicationCredentials: string) {
     }
   }
   catch (e) {
+    console.log("debug: failed checking file existence with error %O", e);
     // googleApplicationCredentials is not a path to a file
   }
   const tmpFile = fileSync({ postfix: ".json" });
