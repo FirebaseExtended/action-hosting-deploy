@@ -22,7 +22,7 @@ import {
   startGroup,
 } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
-import { existsSync } from "fs";
+import { existsSync, unlinkSync } from "fs";
 import { createGacFile } from "./createGACFile";
 import {
   deployPreview,
@@ -52,7 +52,7 @@ const disableComment = getInput("disableComment");
 
 async function run() {
   try {
-    startGroup("Verifying firebase.json exists");
+    startGroup("Verifying setup parameters");
 
     if (entryPoint !== ".") {
       console.log(`Changing to directory: ${entryPoint}`);
@@ -62,21 +62,15 @@ async function run() {
         throw Error(`Error changing to directory ${entryPoint}: ${err}`);
       }
     }
-
     if (existsSync("./firebase.json")) {
       console.log("firebase.json file found. Continuing deploy.");
     } else {
       console.warn("firebase.json file not found. If your firebase.json file is not in the root of your repo, edit the entryPoint option of this GitHub action.");
     }
-    endGroup();
-
-    startGroup("Setting up CLI credentials");
-    console.log("validating passed credentials: %s", googleApplicationCredentials);
     const gacFilename = await createGacFile(googleApplicationCredentials);
-    console.log("generated credentials: %s", gacFilename)
     if (gacFilename !== googleApplicationCredentials) {
       console.log(
-        "Created a temporary file with Application Default Credentials."
+        "Created a temporary file with Google Application Credentials."
       );
     }
     endGroup();
@@ -90,6 +84,11 @@ async function run() {
       startGroup(`Deploying to Firebase preview channel ${channelId}`);
       await deployToPreviewChannel(gacFilename, channelId);
       endGroup();
+    }
+
+    // cleanup
+    if (gacFilename !== googleApplicationCredentials) {
+      unlinkSync(gacFilename);
     }
   } catch (e) {
     setFailed(e.message);

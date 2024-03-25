@@ -17,19 +17,18 @@
 import { fileSync } from "tmp";
 import { writeSync, existsSync } from "fs";
 
-// Set up Google Application Credentials for use by the Firebase CLI
-// https://cloud.google.com/docs/authentication/production#finding_credentials_automatically
-export async function createGacFile(googleApplicationCredentials: string) {
+// creates file with GAC info if parameter is not already a path to a file
+// NOTE: no validation of the credential information is performed
+export async function createGacFile(gacInfo: string) {
   try {
-    if (existsSync(googleApplicationCredentials)) {
-      return googleApplicationCredentials;
+    if (existsSync(gacInfo)) {
+      return gacInfo;
     }
   }
   catch (e) {
-    console.log("debug: failed checking file existence with error %O", e);
-    // googleApplicationCredentials is not a path to a file
+    console.warn("unexpected error while validing GAC info. Interpreting provided info as credentials data.");
   }
   const tmpFile = fileSync({ postfix: ".json" });
-  writeSync(tmpFile.fd, googleApplicationCredentials);
+  writeSync(tmpFile.fd, gacInfo);
   return tmpFile.name;
 }
