@@ -85,7 +85,7 @@ export async function postChannelSuccessComment(
   let commentId;
   try {
     const comments = (await github.rest.issues.listComments(commentInfo)).data;
-    for (let i = comments.length; i--;) {
+    for (let i = comments.length; i--; ) {
       const c = comments[i];
       if (isCommentByBot(c)) {
         commentId = c.id;
@@ -107,8 +107,7 @@ export async function postChannelSuccessComment(
     } catch (e) {
       commentId = null;
     }
-  }
-  else {
+  } else {
     console.log("New comment will be created.");
     try {
       await github.rest.issues.createComment(comment);

@@ -24,9 +24,10 @@ export async function createGacFile(gacInfo: string) {
     if (existsSync(gacInfo)) {
       return gacInfo;
     }
-  }
-  catch (e) {
-    console.warn("unexpected error while validing GAC info. Interpreting provided info as credentials data.");
+  } catch (e) {
+    console.warn(
+      "unexpected error while validing GAC info. Interpreting provided info as credentials data."
+    );
   }
   const tmpFile = fileSync({ postfix: ".json" });
   writeSync(tmpFile.fd, gacInfo);
