@@ -82,6 +82,7 @@ export async function postChannelSuccessComment(
   };
 
   startGroup(`Commenting on PR`);
+
   const deploySignature = createDeploySignature(result);
   const isCommentByBot = createBotCommentIdentifier(deploySignature);
 
@@ -96,10 +97,11 @@ export async function postChannelSuccessComment(
       }
     }
   } catch (e) {
-    console.log("Error checking for previous comments: " + e.message);
+    console.error("Error checking for previous comments: " + e.message);
   }
 
-  if (commentId) {
+  if (!!commentId) {
+    console.log("Found existing comment.");
     try {
       await github.rest.issues.updateComment({
         ...context.repo,
@@ -109,13 +111,12 @@ export async function postChannelSuccessComment(
     } catch (e) {
       commentId = null;
     }
-  }
-
-  if (!commentId) {
+  } else {
+    console.log("New comment will be created.");
     try {
       await github.rest.issues.createComment(comment);
     } catch (e) {
-      console.log(`Error creating comment: ${e.message}`);
+      console.error(`Error creating comment: ${e.message}`);
     }
   }
   endGroup();
