@@ -17,11 +17,7 @@
 import { endGroup, startGroup } from "@actions/core";
 import type { GitHub } from "@actions/github/lib/utils";
 import { Context } from "@actions/github/lib/context";
-import {
-  ChannelSuccessResult,
-  interpretChannelDeployResult,
-  ErrorResult,
-} from "./deploy";
+import { ChannelSuccessResult, interpretChannelDeployResult } from "./deploy";
 import { createDeploySignature } from "./hash";
 
 const BOT_SIGNATURE =
@@ -49,14 +45,14 @@ export function getChannelDeploySuccessComment(
 ) {
   const deploySignature = createDeploySignature(result);
   const urlList = getURLsMarkdownFromChannelDeployResult(result);
-  const { expireTime } = interpretChannelDeployResult(result);
+  const { expire_time_formatted } = interpretChannelDeployResult(result);
 
   return `
 Visit the preview URL for this PR (updated for commit ${commit}):
 
 ${urlList}
 
-<sub>(expires ${new Date(expireTime).toUTCString()})</sub>
+<sub>(expires ${expire_time_formatted})</sub>
 
 ${BOT_SIGNATURE}
 

@@ -64,5 +64,7 @@ outputs:
     description: The url(s) deployed to
   expire_time:
     description: The time the deployed preview urls expire
+  expire_time_formatted:
+    description: The time the deployed preview urls expire in the UTC format
   details_url:
     description: A single URL that was deployed to
