@@ -50,6 +50,7 @@ const octokit = token ? getOctokit(token) : undefined;
 const entryPoint = getInput("entryPoint");
 const target = getInput("target");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
+const disableComment = getInput("disableComment");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -134,12 +135,7 @@ async function run() {
     setOutput("expire_time", expireTime);
     setOutput("details_url", urls[0]);
 
-    const urlsListMarkdown =
-      urls.length === 1
-        ? `[${urls[0]}](${urls[0]})`
-        : urls.map((url) => `- [${url}](${url})`).join("\n");
-
-    if (token && isPullRequest && !!octokit) {
+    if (token && isPullRequest && !!octokit && !disableComment) {
       const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
 
       await postChannelSuccessComment(octokit, context, deployment, commitId);
