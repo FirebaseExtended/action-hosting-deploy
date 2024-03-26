@@ -61,7 +61,7 @@ inputs:
     required: false
   disableComment:
     description: >-
-      To disable auto-commenting with the preview URL to the pull request
+      Disable auto-commenting with the preview channel URL to the pull request
     required: false
 outputs:
   urls:
