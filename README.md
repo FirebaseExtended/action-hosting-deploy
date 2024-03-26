@@ -158,7 +158,11 @@ The url(s) deployed to
 
 ### `expire_time`
 
-The time the deployed preview urls expire
+The time the deployed preview urls expire, example: 2024-04-10T14:37:53.817800922Z
+
+### `expire_time_formatted`
+
+The time the deployed preview urls expire in the UTC format, example: Tue, 09 Apr 2024 18:24:42 GMT
 
 ### `details_url`
 
