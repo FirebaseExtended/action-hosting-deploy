@@ -59,6 +59,10 @@ inputs:
       The version of firebase-tools to use. Defaults to `latest`.
     default: latest
     required: false
+  disableComment:
+    description: >-
+      To disable auto-commenting with the preview URL to the pull request
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to
