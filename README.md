@@ -84,6 +84,32 @@ jobs:
           channelId: live
 ```
 
+```yaml
+name: Deploy to Live Channel
+
+on:
+  push:
+    branches:
+      - main
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: your-Firebase-project-ID
+          channelId: live
+```
+
 ## Options
 
 ### `firebaseServiceAccount` _{string}_ (required)
@@ -127,6 +153,17 @@ _You usually want to leave this blank_ so that each PR gets its own preview chan
 An exception might be that you always want to deploy a certain branch to a
 long-lived preview channel (for example, you may want to deploy every commit
 from your `next` branch to a `preprod` preview channel).
+
+### `context` _{string}_
+
+Context to be deployed to. Available options:
+
+- `hosting` (default)
+- `functions`
+
+Multiple context:
+
+- `hosting|functions`
 
 ### `target` _{string}_
 
