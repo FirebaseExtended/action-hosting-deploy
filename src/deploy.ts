@@ -56,15 +56,17 @@ export type ProductionDeployConfig = DeployConfig & {};
 
 export function interpretChannelDeployResult(
   deployResult: ChannelSuccessResult
-): { expireTime: string; urls: string[] } {
+): { expireTime: string; urls: string[]; target: string } {
   const allSiteResults = Object.values(deployResult.result);
 
   const expireTime = allSiteResults[0].expireTime;
   const urls = allSiteResults.map((siteResult) => siteResult.url);
+  const target = allSiteResults[0].target;
 
   return {
     expireTime,
     urls,
+    target,
   };
 }
 
