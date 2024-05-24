@@ -17,7 +17,7 @@
 import { fileSync } from "tmp";
 import { writeSync, existsSync } from "fs";
 
-// creates file with GAC info if parameter is not already a path to a file
+// creates file with Google Application Credentials info if parameter is not already a path to a file
 // NOTE: no validation of the credential information is performed
 export async function createGacFile(gacInfo: string) {
   try {
