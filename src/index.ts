@@ -137,7 +137,9 @@ async function run() {
     setOutput("expire_time_formatted", expire_time_formatted);
     setOutput("details_url", urls[0]);
     
-    if (!disableComment && token && isPullRequest && !!octokit) {
+    if (disableComment) {
+      console.log(`Commenting on PR is disabled with "disableComment: ${disableComment}"`);
+    } else if (token && isPullRequest && !!octokit) {
       const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
 
       await postChannelSuccessComment(octokit, context, deployment, commitId);
