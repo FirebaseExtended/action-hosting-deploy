@@ -86,7 +86,7 @@ jobs:
 ### Deploy using keyless authentication
 
 Previous options require a service account JSON key to be stored as a string in the repo's "Secrets" area.
-You can authenticate vs. Google Cloud without the need for the JSON key using `auth` action:
+You can authenticate vs. Google Cloud without the need for the JSON key using the [`auth` action](https://github.com/marketplace/actions/authenticate-to-google-cloud):
 
 ```yaml
 name: Deploy to Live Channel
