@@ -65,16 +65,12 @@ async function run() {
     if (existsSync("./firebase.json")) {
       console.log("firebase.json file found. Continuing deploy.");
     } else {
-      console.warn(
+      throw Error(
         "firebase.json file not found. If your firebase.json file is not in the root of your repo, edit the entryPoint option of this GitHub action."
       );
     }
     const gacFilename = await createGacFile(googleApplicationCredentials);
-    if (gacFilename !== googleApplicationCredentials) {
-      console.log(
-        "Created a temporary file with Google Application Credentials."
-      );
-    }
+    console.log("Google Application Credentials acquired.");
     endGroup();
 
     if (configuredChannelId === "live") {
