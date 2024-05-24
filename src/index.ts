@@ -133,12 +133,11 @@ async function deployToPreviewChannel(gacFilePath: string, channelId: string) {
   setOutput("expire_time", expireTime);
   setOutput("details_url", urls[0]);
 
-  const urlsListMarkdown =
-    urls.length === 1
-      ? `[${urls[0]}](${urls[0]})`
-      : urls.map((url) => `- [${url}](${url})`).join("\n");
-
-  if (token && !!context.payload.pull_request && !!octokit) {
+  if (disableComment === "true") {
+    console.log(
+      `Commenting on PR is disabled with "disableComment: ${disableComment}"`
+    );
+  } else if (token && !!context.payload.pull_request && !!octokit) {
     const commitId = context.payload.pull_request?.head.sha.substring(0, 7);
 
     await postChannelSuccessComment(octokit, context, deployment, commitId);
