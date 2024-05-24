@@ -12,18 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Check build
+name: Deploy Preview with version
 
 on: pull_request
 
 jobs:
-  test:
+  preview:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Ensure built files in branch match
-        run: git diff --ignore-space-at-eol --exit-code -- "*.min.js"
+      - name: Deploy to Firebase Hosting preview channel
+        id: firebase_hosting_preview
+        uses: ./
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          expires: 14d
+          projectId: action-hosting-deploy-demo
+          entryPoint: "./demo"
+          firebaseToolsVersion: v11.12.0

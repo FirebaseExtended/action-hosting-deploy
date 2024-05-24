@@ -12,12 +12,14 @@ A full setup guide can be found [in the Firebase Hosting docs](https://firebase.
 The [Firebase CLI](https://firebase.google.com/docs/cli) can get you set up quickly with a default configuration.
 
 - If you've NOT set up Hosting, run this version of the command from the root of your local directory:
+
 ```bash
 firebase init hosting
 ```
 
 - If you've ALREADY set up Hosting, then you just need to set up the GitHub Action part of Hosting.
   Run this version of the command from the root of your local directory:
+
 ```bash
 firebase init hosting:github
 ```
@@ -41,7 +43,7 @@ jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Add any build steps here. For example:
       # - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
@@ -62,7 +64,7 @@ name: Deploy to Live Channel
 on:
   push:
     branches:
-      - master
+      - main
     # Optionally configure to run only for specific files. For example:
     # paths:
     # - "website/**"
@@ -71,12 +73,11 @@ jobs:
   deploy_live_website:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Add any build steps here. For example:
       # - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           projectId: your-Firebase-project-ID
           channelId: live
@@ -139,8 +140,16 @@ for more information about deploy targets.
 
 ### `entryPoint` _{string}_
 
-The location of your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
+The directory containing your [`firebase.json`](https://firebase.google.com/docs/cli#the_firebasejson_file)
 file relative to the root of your repository. Defaults to `.` (the root of your repo).
+
+### `firebaseToolsVersion` _{string}_
+
+The version of `firebase-tools` to use. If not specified, defaults to `latest`.
+
+### `disableComment` _{boolean}_
+
+Disable commenting in a PR with the preview URL.
 
 ## Outputs
 
@@ -152,7 +161,11 @@ The url(s) deployed to
 
 ### `expire_time`
 
-The time the deployed preview urls expire
+The time the deployed preview urls expire, example: 2024-04-10T14:37:53.817800922Z
+
+### `expire_time_formatted`
+
+The time the deployed preview urls expire in the UTC format, example: Tue, 09 Apr 2024 18:24:42 GMT
 
 ### `details_url`
 

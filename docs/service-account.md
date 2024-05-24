@@ -11,9 +11,13 @@ This action requires a service account to authenticate with Firebase Hosting. Th
 1. Give the service account a name, id, description. We recommend something like `github-action-<my repository name>`
 1. At the "Grant this service account access to project" step, choose the following [roles](https://firebase.google.com/docs/projects/iam/roles-predefined-product) that the service account will need to deploy on your behalf:
    - **Firebase Authentication Admin** (Required to add preview URLs to Auth authorized domains)
+     - `roles/firebaseauth.admin`
    - **Firebase Hosting Admin** (Required to deploy preview channels)
+     - `roles/firebasehosting.admin`
    - **Cloud Run Viewer** (Required for projects that [use Hosting rewrites to Cloud Run or Cloud Functions](https://firebase.google.com/docs/hosting/serverless-overview))
+     - `roles/run.viewer`
    - **API Keys Viewer** (Required for CLI deploys)
+     - `roles/serviceusage.apiKeysViewer`
 1. Finish the service account creation flow
 
 ### 2. Get that service account's key and add it to your repository as a secret

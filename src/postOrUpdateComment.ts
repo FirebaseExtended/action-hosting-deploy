@@ -17,11 +17,7 @@
 import { endGroup, startGroup } from "@actions/core";
 import type { GitHub } from "@actions/github/lib/utils";
 import { Context } from "@actions/github/lib/context";
-import {
-  ChannelSuccessResult,
-  interpretChannelDeployResult,
-  ErrorResult,
-} from "./deploy";
+import { ChannelSuccessResult, interpretChannelDeployResult } from "./deploy";
 import { createDeploySignature } from "./hash";
 
 const BOT_SIGNATURE =
@@ -49,14 +45,14 @@ export function getChannelDeploySuccessComment(
 ) {
   const deploySignature = createDeploySignature(result);
   const urlList = getURLsMarkdownFromChannelDeployResult(result);
-  const { expireTime } = interpretChannelDeployResult(result);
+  const { expire_time_formatted } = interpretChannelDeployResult(result);
 
   return `
 Visit the preview URL for this PR (updated for commit ${commit}):
 
 ${urlList}
 
-<sub>(expires ${new Date(expireTime).toUTCString()})</sub>
+<sub>(expires ${expire_time_formatted})</sub>
 
 ${BOT_SIGNATURE}
 
@@ -87,7 +83,7 @@ export async function postChannelSuccessComment(
 
   let commentId;
   try {
-    const comments = (await github.issues.listComments(commentInfo)).data;
+    const comments = (await github.rest.issues.listComments(commentInfo)).data;
     for (let i = comments.length; i--; ) {
       const c = comments[i];
       if (isCommentByBot(c)) {
@@ -101,7 +97,7 @@ export async function postChannelSuccessComment(
 
   if (commentId) {
     try {
-      await github.issues.updateComment({
+      await github.rest.issues.updateComment({
         ...context.repo,
         comment_id: commentId,
         body: comment.body,
@@ -113,7 +109,7 @@ export async function postChannelSuccessComment(
 
   if (!commentId) {
     try {
-      await github.issues.createComment(comment);
+      await github.rest.issues.createComment(comment);
     } catch (e) {
       console.log(`Error creating comment: ${e.message}`);
     }
