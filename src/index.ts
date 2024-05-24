@@ -137,7 +137,7 @@ async function run() {
     setOutput("expire_time_formatted", expire_time_formatted);
     setOutput("details_url", urls[0]);
 
-    if (disableComment) {
+    if (disableComment === 'true') {
       console.log(
         `Commenting on PR is disabled with "disableComment: ${disableComment}"`
       );
