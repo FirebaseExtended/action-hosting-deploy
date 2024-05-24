@@ -26,7 +26,7 @@ export async function createGacFile(gacInfo: string) {
     }
   } catch (e) {
     console.warn(
-      "unexpected error while validing GAC info. Interpreting provided info as credentials data."
+      "unexpected error while validating Google Application Credentials info. Interpreting provided info as credentials data."
     );
   }
   const tmpFile = fileSync({ postfix: ".json" });
