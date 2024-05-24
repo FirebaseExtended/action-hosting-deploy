@@ -36,6 +36,7 @@ import {
   getURLsMarkdownFromChannelDeployResult,
   postChannelSuccessComment,
 } from "./postOrUpdateComment";
+import { getProjectIdByAlias } from "./getProjectIdByAlias";
 
 // Inputs defined in action.yml
 const expires = getInput("expires");
@@ -100,8 +101,13 @@ async function run() {
       }
       endGroup();
 
-      const hostname = target ? `${target}.web.app` : `${projectId}.web.app`;
+      // ProjectId may be an alias. Try to get the real project id from .firebaserc
+      const parsedProjectId = getProjectIdByAlias(projectId) || projectId;
+      const hostname = target
+        ? `${target}.web.app`
+        : `${parsedProjectId}.web.app`;
       const url = `https://${hostname}/`;
+
       await finish({
         details_url: url,
         conclusion: "success",
@@ -110,6 +116,11 @@ async function run() {
           summary: `[${hostname}](${url})`,
         },
       });
+
+      setOutput("urls", [url]);
+      setOutput("expire_time", undefined);
+      setOutput("details_url", url);
+
       return;
     }
 
