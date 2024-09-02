@@ -104,6 +104,8 @@ this secret yourself - GitHub sets it automatically.
 If you omit this option, you'll need to find the preview URL in the action's
 build log.
 
+For this to work your `GITHUB_TOKEN` permissions must be set to "Read and write permissions". This is set in your repository settings under `Actions > General > Workflow permissions`.
+
 ### `expires` _{string}_
 
 The length of time the preview channel should remain active after the last deploy.
