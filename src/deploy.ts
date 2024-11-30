@@ -15,6 +15,7 @@
  */
 
 import { exec } from "@actions/exec";
+import { extractChannelIdFromChannelName } from "./getChannelId";
 
 export type SiteDeploy = {
   site: string;
@@ -27,6 +28,60 @@ export type ErrorResult = {
   status: "error";
   error: string;
 };
+
+export type ChannelTotalSuccessResult = {
+  status: "success";
+  channels: Channel[];
+};
+
+export interface Channel {
+  name: string;
+  url: string;
+  release: {
+    name: string;
+    version: {
+      name: string;
+      status: string;
+      config: {
+        headers: {
+          headers: {
+            "Cache-Control": string;
+          };
+          glob: string;
+        }[];
+        rewrites: {
+          glob: string;
+          path: string;
+        }[];
+      };
+      labels: {
+        "deployment-tool": string;
+      };
+      createTime: string;
+      createUser: {
+        email: string;
+      };
+      finalizeTime: string;
+      finalizeUser: {
+        email: string;
+      };
+      fileCount: string;
+      versionBytes: string;
+    };
+    type: string;
+    releaseTime: string;
+    releaseUser: {
+      email: string;
+    };
+  };
+  createTime: string;
+  updateTime: string;
+  retainedReleaseCount: number;
+  expireTime?: string;
+  labels?: {
+    type: "live";
+  };
+}
 
 export type ChannelSuccessResult = {
   status: "success";
@@ -45,6 +100,8 @@ type DeployConfig = {
   target?: string;
   // Optional version specification for firebase-tools. Defaults to `latest`.
   firebaseToolsVersion?: string;
+  // Optional for preview channels deployment
+  totalPreviewChannelLimit?: number;
 };
 
 export type ChannelDeployConfig = DeployConfig & {
@@ -123,6 +180,120 @@ async function execWithCredentials(
   return deployOutputBuf.length
     ? deployOutputBuf[deployOutputBuf.length - 1].toString("utf-8")
     : ""; // output from the CLI
+}
+
+export async function getAllChannels(
+  gacFilename: string,
+  deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">
+): Promise<Channel[]> {
+  const { projectId, target, firebaseToolsVersion } = deployConfig;
+
+  const allChannelsText = await execWithCredentials(
+    ["hosting:channel:list", ...(target ? ["--site", target] : [])],
+    projectId,
+    gacFilename,
+    { firebaseToolsVersion }
+  );
+
+  const channelResults = JSON.parse(allChannelsText.trim()) as
+    | ChannelTotalSuccessResult
+    | ErrorResult;
+
+  if (channelResults.status === "error") {
+    throw Error((channelResults as ErrorResult).error);
+  } else {
+    return channelResults.channels || [];
+  }
+}
+
+function getPreviewChannelToRemove(
+  channels: Channel[],
+  totalPreviewChannelLimit: DeployConfig["totalPreviewChannelLimit"]
+): Channel[] {
+  // Filter out live channel(hosting default site) and channels without an expireTime(additional sites)
+  const previewChannelsOnly = channels.filter(
+    (channel) => channel?.labels?.type !== "live" && !!channel?.expireTime
+  );
+
+  if (previewChannelsOnly.length) {
+    // Sort preview channels by expireTime
+    const sortedPreviewChannels = previewChannelsOnly.sort(
+      (channelA, channelB) => {
+        return (
+          new Date(channelA.expireTime).getTime() -
+          new Date(channelB.expireTime).getTime()
+        );
+      }
+    );
+
+    // If the total number of preview channels exceeds the limit, return the ones with earlier expireTime
+    if (sortedPreviewChannels.length > totalPreviewChannelLimit) {
+      return sortedPreviewChannels.slice(
+        0,
+        sortedPreviewChannels.length - totalPreviewChannelLimit
+      );
+    }
+  } else {
+    return [];
+  }
+}
+
+/**
+ * Removes preview channels from the list of active channels if the number exceeds the configured limit
+ *
+ * This function identifies the preview channels that need to be removed based on the total limit of
+ * preview channels allowed (`totalPreviewChannelLimit`).
+ *
+ * It then attempts to remove those channels using the `removeChannel` function.
+ * Errors encountered while removing channels are logged but do not stop the execution of removing other channels.
+ */
+export async function removePreviews({
+  channels,
+  gacFilename,
+  deployConfig,
+}: {
+  channels: Channel[];
+  gacFilename: string;
+  deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">;
+}) {
+  const toRemove = getPreviewChannelToRemove(
+    channels,
+    deployConfig.totalPreviewChannelLimit
+  );
+
+  if (toRemove.length) {
+    await Promise.all(
+      toRemove.map(async (channel) => {
+        try {
+          await removeChannel(
+            gacFilename,
+            deployConfig,
+            extractChannelIdFromChannelName(channel.name)
+          );
+        } catch (error) {
+          console.error(
+            `Error removing preview channel ${channel.name}:`,
+            error
+          );
+        }
+      })
+    );
+  }
+}
+
+export function removeChannel(
+  gacFilename: string,
+  deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">,
+  channelId: string
+): Promise<string> {
+  const { projectId, firebaseToolsVersion } = deployConfig;
+
+  return execWithCredentials(
+    ["hosting:channel:delete", channelId, "--force"],
+    projectId,
+    gacFilename,
+    { firebaseToolsVersion }
+  );
 }
 
 export async function deployPreview(

@@ -151,6 +151,14 @@ The version of `firebase-tools` to use. If not specified, defaults to `latest`.
 
 Disable commenting in a PR with the preview URL.
 
+### `totalPreviewChannelLimit` _{number}_
+
+Specifies the maximum number of preview channels allowed to optimize resource usage or avoid exceeding Firebase Hosting’s quota.
+
+Once the limit is reached, the oldest channels are automatically removed to prevent errors like "Couldn't create channel on [project]: channel quota reached", ensuring smooth deployments.
+
+Currently, **50** preview channels are allowed per Firebase project, including the default "live" site and any additional "live" sites. _totalPreviewChannelLimit = 50 - number of "live sites"_
+
 ## Outputs
 
 Values emitted by this action that can be consumed by other actions later in your workflow
