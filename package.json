@@ -25,6 +25,7 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
+    "prepare": "husky install",
     "format:check": "prettier . --list-different",
     "format": "prettier --write .",
     "build": "microbundle --format cjs --target node --no-compress --no-sourcemap src/index.ts",
