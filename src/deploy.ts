@@ -111,6 +111,9 @@ export type ChannelDeployConfig = DeployConfig & {
 
 export type ProductionDeployConfig = DeployConfig & {};
 
+const SITE_CHANNEL_QUOTA = 50;
+const SITE_CHANNEL_LIVE_SITE = 1;
+
 export function interpretChannelDeployResult(
   deployResult: ChannelSuccessResult
 ): { expireTime: string; expire_time_formatted: string; urls: string[] } {
@@ -210,28 +213,55 @@ function getPreviewChannelToRemove(
   channels: Channel[],
   totalPreviewChannelLimit: DeployConfig["totalPreviewChannelLimit"]
 ): Channel[] {
-  // Filter out live channel(hosting default site) and channels without an expireTime(additional sites)
-  const previewChannelsOnly = channels.filter(
-    (channel) => channel?.labels?.type !== "live" && !!channel?.expireTime
-  );
+  let totalAllowedPreviewChannels = totalPreviewChannelLimit;
+  let totalPreviewChannelToSlice = totalPreviewChannelLimit;
 
-  if (previewChannelsOnly.length) {
-    // Sort preview channels by expireTime
-    const sortedPreviewChannels = previewChannelsOnly.sort(
-      (channelA, channelB) => {
-        return (
-          new Date(channelA.expireTime).getTime() -
-          new Date(channelB.expireTime).getTime()
-        );
-      }
+  if (totalPreviewChannelLimit >= SITE_CHANNEL_QUOTA - SITE_CHANNEL_LIVE_SITE) {
+    /**
+     * If the total number of preview channels is greater than or equal to the site channel quota,
+     * preview channels is the site channel quota minus the live site channel
+     *
+     * e.g. 49(total allowed preview channels) = 50(quota) - 1(live site channel)
+     */
+    totalAllowedPreviewChannels =
+      totalPreviewChannelLimit - SITE_CHANNEL_LIVE_SITE;
+
+    /**
+     * If the total number of preview channels is greater than or equal to the site channel quota,
+     * total preview channels to slice is the site channel quota plus the live site channel plus the current preview deploy
+     *
+     * e.g. 52(total preview channels to slice) = 50(site channel quota) + 1(live site channel) + 1 (current preview deploy)
+     */
+    totalPreviewChannelToSlice =
+      SITE_CHANNEL_QUOTA + SITE_CHANNEL_LIVE_SITE + 1;
+  }
+
+  if (channels.length > totalAllowedPreviewChannels) {
+    // If the total number of channels exceeds the limit, remove the preview channels
+    // Filter out live channel(hosting default site) and channels without an expireTime(additional sites)
+    const previewChannelsOnly = channels.filter(
+      (channel) => channel?.labels?.type !== "live" && !!channel?.expireTime
     );
 
-    // If the total number of preview channels exceeds the limit, return the ones with earlier expireTime
-    if (sortedPreviewChannels.length > totalPreviewChannelLimit) {
-      return sortedPreviewChannels.slice(
-        0,
-        sortedPreviewChannels.length - totalPreviewChannelLimit
+    if (previewChannelsOnly.length) {
+      // Sort preview channels by expireTime
+      const sortedPreviewChannels = previewChannelsOnly.sort(
+        (channelA, channelB) => {
+          return (
+            new Date(channelA.expireTime).getTime() -
+            new Date(channelB.expireTime).getTime()
+          );
+        }
       );
+
+      // Calculate the number of preview channels to remove
+      const sliceEnd =
+        totalPreviewChannelToSlice > sortedPreviewChannels.length
+          ? totalPreviewChannelToSlice - sortedPreviewChannels.length
+          : sortedPreviewChannels.length - totalPreviewChannelToSlice;
+
+      // Remove the oldest preview channels
+      return sortedPreviewChannels.slice(0, sliceEnd);
     }
   } else {
     return [];
