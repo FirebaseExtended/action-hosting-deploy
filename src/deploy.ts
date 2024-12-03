@@ -29,6 +29,10 @@ export type ErrorResult = {
   error: string;
 };
 
+export type ChannelDeleteSuccessResult = {
+  status: "success";
+};
+
 export type ChannelTotalSuccessResult = {
   status: "success";
   channels: Channel[];
@@ -126,7 +130,7 @@ export function interpretChannelDeployResult(
   return {
     expireTime,
     expire_time_formatted,
-    urls,
+    urls
   };
 }
 
@@ -148,19 +152,19 @@ async function execWithCredentials(
         ...(projectId ? ["--project", projectId] : []),
         debug
           ? "--debug" // gives a more thorough error message
-          : "--json", // allows us to easily parse the output
+          : "--json" // allows us to easily parse the output
       ],
       {
         listeners: {
           stdout(data: Buffer) {
             deployOutputBuf.push(data);
-          },
+          }
         },
         env: {
           ...process.env,
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
-        },
+          GOOGLE_APPLICATION_CREDENTIALS: gacFilename // the CLI will automatically authenticate with this env variable set
+        }
       }
     );
   } catch (e) {
@@ -173,7 +177,7 @@ async function execWithCredentials(
       );
       await execWithCredentials(args, projectId, gacFilename, {
         debug: true,
-        firebaseToolsVersion,
+        firebaseToolsVersion
       });
     } else {
       throw e;
@@ -280,7 +284,7 @@ function getPreviewChannelToRemove(
 export async function removePreviews({
   channels,
   gacFilename,
-  deployConfig,
+  deployConfig
 }: {
   channels: Channel[];
   gacFilename: string;
@@ -311,19 +315,34 @@ export async function removePreviews({
   }
 }
 
-export function removeChannel(
+export async function removeChannel(
   gacFilename: string,
   deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">,
   channelId: string
 ): Promise<string> {
-  const { projectId, firebaseToolsVersion } = deployConfig;
+  const { projectId, target, firebaseToolsVersion } = deployConfig;
 
-  return execWithCredentials(
-    ["hosting:channel:delete", channelId, "--force"],
+  const deleteChannelText = await execWithCredentials(
+    [
+      "hosting:channel:delete",
+      channelId,
+      ...(target ? ["--site", target] : []),
+      "--force"
+    ],
     projectId,
     gacFilename,
     { firebaseToolsVersion }
   );
+
+  const channelResults = JSON.parse(deleteChannelText.trim()) as
+    | ChannelDeleteSuccessResult
+    | ErrorResult;
+
+  if (channelResults.status === "error") {
+    throw Error((channelResults as ErrorResult).error);
+  } else {
+    return channelResults.status || "success";
+  }
 }
 
 export async function deployPreview(
@@ -338,7 +357,7 @@ export async function deployPreview(
       "hosting:channel:deploy",
       channelId,
       ...(target ? ["--only", target] : []),
-      ...(expires ? ["--expires", expires] : []),
+      ...(expires ? ["--expires", expires] : [])
     ],
     projectId,
     gacFilename,
