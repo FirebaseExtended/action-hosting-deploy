@@ -40,9 +40,7 @@ import {
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
-const googleApplicationCredentials = getInput("firebaseServiceAccount", {
-  required: true,
-});
+const googleApplicationCredentials = getInput("firebaseServiceAccount");
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
 const token = process.env.GITHUB_TOKEN || getInput("repoToken");
@@ -52,7 +50,7 @@ const target = getInput("target");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 const disableComment = getInput("disableComment");
 
-async function run() {
+export async function run() {
   const isPullRequest = !!context.payload.pull_request;
 
   let finish = (details: Object) => console.log(details);
