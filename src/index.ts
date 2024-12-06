@@ -50,7 +50,7 @@ const target = getInput("target");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 const disableComment = getInput("disableComment");
 
-export async function run() {
+async function run() {
   const isPullRequest = !!context.payload.pull_request;
 
   let finish = (details: Object) => console.log(details);
