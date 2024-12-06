@@ -95,7 +95,7 @@ to prevent unintended access to your Firebase project. Set it in the "Secrets" a
 of your repository settings and add it as `FIREBASE_SERVICE_ACCOUNT`:
 `https://github.com/USERNAME/REPOSITORY/settings/secrets`.
 
-If not provided, the action will attempt to use the default application credentials configured in your environment.  
+If not provided, the action will attempt to use the default application credentials configured in your environment.
 
 ### `repoToken` _{string}_
 
