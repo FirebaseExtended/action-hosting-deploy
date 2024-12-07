@@ -99,7 +99,9 @@ async function execWithCredentials(
         env: {
           ...process.env,
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
+          ...(gacFilename
+            ? { GOOGLE_APPLICATION_CREDENTIALS: gacFilename } // the CLI will automatically authenticate with this env variable set
+            : {}),
         },
       }
     );

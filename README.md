@@ -85,7 +85,7 @@ jobs:
 
 ## Options
 
-### `firebaseServiceAccount` _{string}_ (required)
+### `firebaseServiceAccount` _{string}_
 
 This is a service account JSON key. The easiest way to set it up is to run `firebase init hosting:github`. However, it can also be [created manually](./docs/service-account.md).
 
@@ -94,6 +94,8 @@ It's important to store this token as an
 to prevent unintended access to your Firebase project. Set it in the "Secrets" area
 of your repository settings and add it as `FIREBASE_SERVICE_ACCOUNT`:
 `https://github.com/USERNAME/REPOSITORY/settings/secrets`.
+
+If not provided, the action will attempt to use the default application credentials configured in your environment.
 
 ### `repoToken` _{string}_
 
