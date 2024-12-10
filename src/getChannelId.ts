@@ -37,3 +37,15 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
 
   return correctedChannelId;
 }
+
+/**
+ * Extracts the channel ID from the channel name
+ * @param channelName
+ * @returns channelId
+ *  Example channelName: projects/my-project/sites/test-staging/channels/pr123-my-branch
+ */
+export function extractChannelIdFromChannelName(channelName: string): string {
+  const parts = channelName.split("/");
+  const channelIndex = parts.indexOf("channels") + 1; // The part after "channels"
+  return parts[channelIndex]; // Returns the channel name after "channels/"
+}

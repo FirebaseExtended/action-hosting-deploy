@@ -29,7 +29,9 @@ import {
   deployPreview,
   deployProductionSite,
   ErrorResult,
+  getAllChannels,
   interpretChannelDeployResult,
+  removePreviews,
 } from "./deploy";
 import { getChannelId } from "./getChannelId";
 import {
@@ -51,6 +53,9 @@ const entryPoint = getInput("entryPoint");
 const target = getInput("target");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 const disableComment = getInput("disableComment");
+const totalPreviewChannelLimit = Number(
+  getInput("totalPreviewChannelLimit") || "0"
+);
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -114,6 +119,29 @@ async function run() {
     }
 
     const channelId = getChannelId(configuredChannelId, context);
+
+    if (totalPreviewChannelLimit) {
+      startGroup(`Start counting total Firebase preview channel ${channelId}`);
+
+      const allChannels = await getAllChannels(gacFilename, {
+        projectId,
+        target,
+        firebaseToolsVersion,
+        totalPreviewChannelLimit,
+      });
+
+      if (allChannels.length) {
+        await removePreviews({
+          channels: allChannels,
+          gacFilename,
+          deployConfig: {
+            projectId,
+            target,
+            firebaseToolsVersion,
+          },
+        });
+      }
+    }
 
     startGroup(`Deploying to Firebase preview channel ${channelId}`);
     const deployment = await deployPreview(gacFilename, {
