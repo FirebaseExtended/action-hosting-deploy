@@ -119,7 +119,7 @@ const SITE_CHANNEL_QUOTA = 50;
 const SITE_CHANNEL_LIVE_SITE = 1;
 
 export function interpretChannelDeployResult(
-  deployResult: ChannelSuccessResult,
+  deployResult: ChannelSuccessResult
 ): { expireTime: string; expire_time_formatted: string; urls: string[] } {
   const allSiteResults = Object.values(deployResult.result);
 
@@ -165,7 +165,7 @@ async function execWithCredentials(
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
           GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
         },
-      },
+      }
     );
   } catch (e) {
     console.log(Buffer.concat(deployOutputBuf).toString("utf-8"));
@@ -173,7 +173,7 @@ async function execWithCredentials(
 
     if (!debug) {
       console.log(
-        "Retrying deploy with the --debug flag for better error output",
+        "Retrying deploy with the --debug flag for better error output"
       );
       await execWithCredentials(args, projectId, gacFilename, {
         debug: true,
@@ -199,7 +199,7 @@ export async function getAllChannels(
     ["hosting:channel:list", ...(target ? ["--site", target] : [])],
     projectId,
     gacFilename,
-    { firebaseToolsVersion },
+    { firebaseToolsVersion }
   );
 
   const channelResults = JSON.parse(allChannelsText.trim()) as
@@ -347,7 +347,7 @@ export async function removeChannel(
 
 export async function deployPreview(
   gacFilename: string,
-  deployConfig: ChannelDeployConfig,
+  deployConfig: ChannelDeployConfig
 ) {
   const { projectId, channelId, target, expires, firebaseToolsVersion } =
     deployConfig;
@@ -381,7 +381,7 @@ export async function deployProductionSite(
     ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
     projectId,
     gacFilename,
-    { firebaseToolsVersion },
+    { firebaseToolsVersion }
   );
 
   const deploymentResult = JSON.parse(deploymentText) as
