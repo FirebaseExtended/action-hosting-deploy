@@ -119,7 +119,7 @@ const SITE_CHANNEL_QUOTA = 50;
 const SITE_CHANNEL_LIVE_SITE = 1;
 
 export function interpretChannelDeployResult(
-  deployResult: ChannelSuccessResult
+  deployResult: ChannelSuccessResult,
 ): { expireTime: string; expire_time_formatted: string; urls: string[] } {
   const allSiteResults = Object.values(deployResult.result);
 
@@ -130,7 +130,7 @@ export function interpretChannelDeployResult(
   return {
     expireTime,
     expire_time_formatted,
-    urls
+    urls,
   };
 }
 
@@ -138,7 +138,7 @@ async function execWithCredentials(
   args: string[],
   projectId,
   gacFilename,
-  opts: { debug?: boolean; firebaseToolsVersion?: string }
+  opts: { debug?: boolean; firebaseToolsVersion?: string },
 ) {
   let deployOutputBuf: Buffer[] = [];
   const debug = opts.debug || false;
@@ -152,20 +152,20 @@ async function execWithCredentials(
         ...(projectId ? ["--project", projectId] : []),
         debug
           ? "--debug" // gives a more thorough error message
-          : "--json" // allows us to easily parse the output
+          : "--json", // allows us to easily parse the output
       ],
       {
         listeners: {
           stdout(data: Buffer) {
             deployOutputBuf.push(data);
-          }
+          },
         },
         env: {
           ...process.env,
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename // the CLI will automatically authenticate with this env variable set
-        }
-      }
+          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
+        },
+      },
     );
   } catch (e) {
     console.log(Buffer.concat(deployOutputBuf).toString("utf-8"));
@@ -173,11 +173,11 @@ async function execWithCredentials(
 
     if (!debug) {
       console.log(
-        "Retrying deploy with the --debug flag for better error output"
+        "Retrying deploy with the --debug flag for better error output",
       );
       await execWithCredentials(args, projectId, gacFilename, {
         debug: true,
-        firebaseToolsVersion
+        firebaseToolsVersion,
       });
     } else {
       throw e;
@@ -191,7 +191,7 @@ async function execWithCredentials(
 
 export async function getAllChannels(
   gacFilename: string,
-  deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">
+  deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">,
 ): Promise<Channel[]> {
   const { projectId, target, firebaseToolsVersion } = deployConfig;
 
@@ -199,7 +199,7 @@ export async function getAllChannels(
     ["hosting:channel:list", ...(target ? ["--site", target] : [])],
     projectId,
     gacFilename,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion },
   );
 
   const channelResults = JSON.parse(allChannelsText.trim()) as
@@ -215,7 +215,7 @@ export async function getAllChannels(
 
 function getPreviewChannelToRemove(
   channels: Channel[],
-  totalPreviewChannelLimit: DeployConfig["totalPreviewChannelLimit"]
+  totalPreviewChannelLimit: DeployConfig["totalPreviewChannelLimit"],
 ): Channel[] {
   let totalAllowedPreviewChannels = totalPreviewChannelLimit;
   let totalPreviewChannelToSlice = totalPreviewChannelLimit;
@@ -244,7 +244,7 @@ function getPreviewChannelToRemove(
     // If the total number of channels exceeds the limit, remove the preview channels
     // Filter out live channel(hosting default site) and channels without an expireTime(additional sites)
     const previewChannelsOnly = channels.filter(
-      (channel) => channel?.labels?.type !== "live" && !!channel?.expireTime
+      (channel) => channel?.labels?.type !== "live" && !!channel?.expireTime,
     );
 
     if (previewChannelsOnly.length) {
@@ -255,7 +255,7 @@ function getPreviewChannelToRemove(
             new Date(channelA.expireTime).getTime() -
             new Date(channelB.expireTime).getTime()
           );
-        }
+        },
       );
 
       // Calculate the number of preview channels to remove
@@ -284,7 +284,7 @@ function getPreviewChannelToRemove(
 export async function removePreviews({
   channels,
   gacFilename,
-  deployConfig
+  deployConfig,
 }: {
   channels: Channel[];
   gacFilename: string;
@@ -292,7 +292,7 @@ export async function removePreviews({
 }) {
   const toRemove = getPreviewChannelToRemove(
     channels,
-    deployConfig.totalPreviewChannelLimit
+    deployConfig.totalPreviewChannelLimit,
   );
 
   if (toRemove.length) {
@@ -302,15 +302,15 @@ export async function removePreviews({
           await removeChannel(
             gacFilename,
             deployConfig,
-            extractChannelIdFromChannelName(channel.name)
+            extractChannelIdFromChannelName(channel.name),
           );
         } catch (error) {
           console.error(
             `Error removing preview channel ${channel.name}:`,
-            error
+            error,
           );
         }
-      })
+      }),
     );
   }
 }
@@ -318,7 +318,7 @@ export async function removePreviews({
 export async function removeChannel(
   gacFilename: string,
   deployConfig: Omit<ChannelDeployConfig, "expires" | "channelId">,
-  channelId: string
+  channelId: string,
 ): Promise<string> {
   const { projectId, target, firebaseToolsVersion } = deployConfig;
 
@@ -327,11 +327,11 @@ export async function removeChannel(
       "hosting:channel:delete",
       channelId,
       ...(target ? ["--site", target] : []),
-      "--force"
+      "--force",
     ],
     projectId,
     gacFilename,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion },
   );
 
   const channelResults = JSON.parse(deleteChannelText.trim()) as
@@ -347,7 +347,7 @@ export async function removeChannel(
 
 export async function deployPreview(
   gacFilename: string,
-  deployConfig: ChannelDeployConfig
+  deployConfig: ChannelDeployConfig,
 ) {
   const { projectId, channelId, target, expires, firebaseToolsVersion } =
     deployConfig;
@@ -357,11 +357,11 @@ export async function deployPreview(
       "hosting:channel:deploy",
       channelId,
       ...(target ? ["--only", target] : []),
-      ...(expires ? ["--expires", expires] : [])
+      ...(expires ? ["--expires", expires] : []),
     ],
     projectId,
     gacFilename,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion },
   );
 
   const deploymentResult = JSON.parse(deploymentText.trim()) as
@@ -373,7 +373,7 @@ export async function deployPreview(
 
 export async function deployProductionSite(
   gacFilename,
-  productionDeployConfig: ProductionDeployConfig
+  productionDeployConfig: ProductionDeployConfig,
 ) {
   const { projectId, target, firebaseToolsVersion } = productionDeployConfig;
 
@@ -381,7 +381,7 @@ export async function deployProductionSite(
     ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
     projectId,
     gacFilename,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion },
   );
 
   const deploymentResult = JSON.parse(deploymentText) as
