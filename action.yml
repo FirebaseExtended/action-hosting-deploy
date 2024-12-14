@@ -64,6 +64,10 @@ inputs:
       Disable auto-commenting with the preview channel URL to the pull request
     default: "false"
     required: false
+  totalPreviewChannelLimit:
+    description: >-
+      Defines the maximum number of preview channels allowed in a Firebase project
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to
