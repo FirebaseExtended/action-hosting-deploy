@@ -138,7 +138,7 @@ async function execWithCredentials(
   args: string[],
   projectId,
   gacFilename,
-  opts: { debug?: boolean; firebaseToolsVersion?: string },
+  opts: { debug?: boolean; firebaseToolsVersion?: string }
 ) {
   let deployOutputBuf: Buffer[] = [];
   const debug = opts.debug || false;
@@ -361,7 +361,7 @@ export async function deployPreview(
     ],
     projectId,
     gacFilename,
-    { firebaseToolsVersion },
+    { firebaseToolsVersion }
   );
 
   const deploymentResult = JSON.parse(deploymentText.trim()) as
@@ -373,7 +373,7 @@ export async function deployPreview(
 
 export async function deployProductionSite(
   gacFilename,
-  productionDeployConfig: ProductionDeployConfig,
+  productionDeployConfig: ProductionDeployConfig
 ) {
   const { projectId, target, firebaseToolsVersion } = productionDeployConfig;
 
