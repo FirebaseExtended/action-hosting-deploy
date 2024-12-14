@@ -25,7 +25,7 @@ export async function createCheck(
     ...context.repo,
     name: "Deploy Preview",
     head_sha: context.payload.pull_request?.head.sha,
-    status: "in_progress",
+    status: "in_progress"
   });
 
   return async (details: Object) => {
@@ -34,7 +34,7 @@ export async function createCheck(
       check_run_id: check.data.id,
       completed_at: new Date().toISOString(),
       status: "completed",
-      ...details,
+      ...details
     });
   };
 }

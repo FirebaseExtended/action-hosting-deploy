@@ -1,6 +1,6 @@
 import {
   channelSingleSiteSuccess,
-  channelMultiSiteSuccess,
+  channelMultiSiteSuccess
 } from "./samples/cliOutputs";
 import { createDeploySignature } from "../src/hash";
 
@@ -18,8 +18,8 @@ describe("hash", () => {
       ...channelMultiSiteSuccess,
       result: {
         targetX: channelMultiSiteSuccess.result.target2,
-        targetY: channelMultiSiteSuccess.result.target1,
-      },
+        targetY: channelMultiSiteSuccess.result.target1
+      }
     });
     expect(signMulti2).toEqual("980f04126fb629deaadace7d6ee8a0628942e3d3");
   });

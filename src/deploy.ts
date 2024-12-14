@@ -66,7 +66,7 @@ export function interpretChannelDeployResult(
   return {
     expireTime,
     expire_time_formatted,
-    urls,
+    urls
   };
 }
 
@@ -88,19 +88,19 @@ async function execWithCredentials(
         ...(projectId ? ["--project", projectId] : []),
         debug
           ? "--debug" // gives a more thorough error message
-          : "--json", // allows us to easily parse the output
+          : "--json" // allows us to easily parse the output
       ],
       {
         listeners: {
           stdout(data: Buffer) {
             deployOutputBuf.push(data);
-          },
+          }
         },
         env: {
           ...process.env,
           FIREBASE_DEPLOY_AGENT: "action-hosting-deploy",
-          GOOGLE_APPLICATION_CREDENTIALS: gacFilename, // the CLI will automatically authenticate with this env variable set
-        },
+          GOOGLE_APPLICATION_CREDENTIALS: gacFilename // the CLI will automatically authenticate with this env variable set
+        }
       }
     );
   } catch (e) {
@@ -113,7 +113,7 @@ async function execWithCredentials(
       );
       await execWithCredentials(args, projectId, gacFilename, {
         debug: true,
-        firebaseToolsVersion,
+        firebaseToolsVersion
       });
     } else {
       throw e;
@@ -137,7 +137,7 @@ export async function deployPreview(
       "hosting:channel:deploy",
       channelId,
       ...(target ? ["--only", target] : []),
-      ...(expires ? ["--expires", expires] : []),
+      ...(expires ? ["--expires", expires] : [])
     ],
     projectId,
     gacFilename,

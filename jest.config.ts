@@ -11,5 +11,5 @@ export default {
   preset: "ts-jest",
 
   // The test environment that will be used for testing
-  testEnvironment: "node",
+  testEnvironment: "node"
 };

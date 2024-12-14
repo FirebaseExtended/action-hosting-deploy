@@ -4,7 +4,7 @@ import {
   deployPreview,
   deployProductionSite,
   ProductionDeployConfig,
-  ProductionSuccessResult,
+  ProductionSuccessResult
 } from "../src/deploy";
 import * as exec from "@actions/exec";
 import {
@@ -12,17 +12,17 @@ import {
   channelMultiSiteSuccess,
   channelSingleSiteSuccess,
   liveDeployMultiSiteSuccess,
-  liveDeploySingleSiteSuccess,
+  liveDeploySingleSiteSuccess
 } from "./samples/cliOutputs";
 
 const baseChannelDeployConfig: ChannelDeployConfig = {
   projectId: "my-project",
   channelId: "my-channel",
-  expires: undefined,
+  expires: undefined
 };
 
 const baseLiveDeployConfig: ProductionDeployConfig = {
-  projectId: "my-project",
+  projectId: "my-project"
 };
 
 async function fakeExecFail(
@@ -114,7 +114,7 @@ describe("deploy", () => {
 
       const config: ChannelDeployConfig = {
         ...baseChannelDeployConfig,
-        target: "my-second-site",
+        target: "my-second-site"
       };
 
       await deployPreview("my-file", config);
