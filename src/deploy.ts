@@ -331,7 +331,7 @@ export async function removeChannel(
     ],
     projectId,
     gacFilename,
-    { firebaseToolsVersion },
+    { firebaseToolsVersion }
   );
 
   const channelResults = JSON.parse(deleteChannelText.trim()) as
