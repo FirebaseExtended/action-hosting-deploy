@@ -24,26 +24,19 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
   } else if (ghContext.payload.pull_request) {
     const branchName = ghContext.payload.pull_request.head.ref.substr(0, 20);
     tmpChannelId = `pr${ghContext.payload.pull_request.number}-${branchName}`;
+  } else {
+    throw Error(
+      `ChannelId is empty. No branch was found in the current context. Please provide a channelId for test environments.`
+    );
   }
 
   // Channel IDs can only include letters, numbers, underscores, hyphens, and periods.
   const invalidCharactersRegex = /[^a-zA-Z0-9_\-\.]/g;
   const correctedChannelId = tmpChannelId.replace(invalidCharactersRegex, "_");
 
-  console.log(`configuredChannelId :"${configuredChannelId}"`);
-  console.log(`tmpChannelId :"${tmpChannelId}"`);
-  console.log(`correctedChannelId :"${correctedChannelId}"`);
-  console.log("ghContext :", ghContext);
-  
   if (correctedChannelId !== tmpChannelId) {
     console.log(
-      `ChannelId "${tmpChannelId}" contains unsupported characters. Using "${correctedChannelId}" instead, ${configuredChannelId}.`
-    );
-  }
-
-  if (correctedChannelId.length == 0) {
-    throw Error(
-      `ChannelId is empty. No branch was found in the current context. Please provide a channelId for testing.`
+      `ChannelId "${tmpChannelId}" contains unsupported characters. Using "${correctedChannelId}" instead.`
     );
   }
 
