@@ -35,5 +35,11 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
     );
   }
 
+  if (correctedChannelId.length == 0) {
+    throw Error(
+      `ChannelId is empty. No branch was found in the current context. Please provide a channelId for testing.`
+    );
+  }
+
   return correctedChannelId;
 }
