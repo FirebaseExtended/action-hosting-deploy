@@ -37,7 +37,7 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
   
   if (correctedChannelId !== tmpChannelId) {
     console.log(
-      `ChannelId "${tmpChannelId}" contains unsupported characters. Using "${correctedChannelId}" instead.`
+      `ChannelId "${tmpChannelId}" contains unsupported characters. Using "${correctedChannelId}" instead, ${configuredChannelId}.`
     );
   }
 
