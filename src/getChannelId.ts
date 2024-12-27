@@ -30,7 +30,10 @@ export function getChannelId(configuredChannelId: string, ghContext: Context) {
   const invalidCharactersRegex = /[^a-zA-Z0-9_\-\.]/g;
   const correctedChannelId = tmpChannelId.replace(invalidCharactersRegex, "_");
 
-  console.table({configuredChannelId, tmpChannelId, invalidCharactersRegex, correctedChannelId});
+  console.log(`configuredChannelId :"${configuredChannelId}"`);
+  console.log(`tmpChannelId :"${tmpChannelId}"`);
+  console.log(`correctedChannelId :"${correctedChannelId}"`);
+  console.log("ghContext :", ghContext);
   
   if (correctedChannelId !== tmpChannelId) {
     console.log(
