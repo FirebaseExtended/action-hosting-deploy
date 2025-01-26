@@ -19,7 +19,7 @@ branding:
   icon: "globe"
   color: "blue"
 runs:
-  using: "node16"
+  using: "node20"
   main: "bin/action.min.js"
 inputs:
   repoToken:
@@ -59,10 +59,17 @@ inputs:
       The version of firebase-tools to use. Defaults to `latest`.
     default: latest
     required: false
+  disableComment:
+    description: >-
+      Disable auto-commenting with the preview channel URL to the pull request
+    default: "false"
+    required: false
 outputs:
   urls:
     description: The url(s) deployed to
   expire_time:
     description: The time the deployed preview urls expire
+  expire_time_formatted:
+    description: The time the deployed preview urls expire in the UTC format
   details_url:
     description: A single URL that was deployed to
