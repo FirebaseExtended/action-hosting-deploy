@@ -51,6 +51,7 @@ const entryPoint = getInput("entryPoint");
 const target = getInput("target");
 const firebaseToolsVersion = getInput("firebaseToolsVersion");
 const disableComment = getInput("disableComment");
+const force = getInput("force");
 
 async function run() {
   const isPullRequest = !!context.payload.pull_request;
@@ -90,11 +91,15 @@ async function run() {
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");
-      const deployment = await deployProductionSite(gacFilename, {
-        projectId,
-        target,
-        firebaseToolsVersion,
-      });
+      const deployment = await deployProductionSite(
+        gacFilename,
+        {
+          projectId,
+          target,
+          firebaseToolsVersion,
+          force,
+        }
+      );
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
       }
@@ -122,6 +127,7 @@ async function run() {
       channelId,
       target,
       firebaseToolsVersion,
+      force,
     });
 
     if (deployment.status === "error") {
