@@ -28,6 +28,7 @@ import { createGacFile } from "./createGACFile";
 import {
   deployPreview,
   deployProductionSite,
+  deployWithForce,
   ErrorResult,
   interpretChannelDeployResult,
 } from "./deploy";
@@ -88,6 +89,32 @@ async function run() {
       "Created a temporary file with Application Default Credentials."
     );
     endGroup();
+
+    if (force) {
+      startGroup("Deploying with force flag");
+      const deployment = await deployWithForce(gacFilename, {
+        projectId,
+        target,
+        firebaseToolsVersion,
+        force,
+      });
+      if (deployment.status === "error") {
+        throw Error((deployment as ErrorResult).error);
+      }
+      endGroup();
+
+      const hostname = target ? `${target}.web.app` : `${projectId}.web.app`;
+      const url = `https://${hostname}/`;
+      await finish({
+        details_url: url,
+        conclusion: "success",
+        output: {
+          title: `Production deploy succeeded`,
+          summary: `[${hostname}](${url})`,
+        },
+      });
+      return;
+    }
 
     if (isProductionDeploy) {
       startGroup("Deploying to production site");

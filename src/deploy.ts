@@ -40,6 +40,13 @@ export type ProductionSuccessResult = {
   };
 };
 
+export type ForceSuccessResult = {
+  status: "success";
+  result: {
+    hosting: string | string[];
+  };
+};
+
 type DeployConfig = {
   projectId: string;
   target?: string;
@@ -51,6 +58,10 @@ type DeployConfig = {
 export type ChannelDeployConfig = DeployConfig & {
   expires: string;
   channelId: string;
+};
+
+export type ForceDeployConfig = DeployConfig & {
+  force: boolean;
 };
 
 export type ProductionDeployConfig = DeployConfig & {};
@@ -159,17 +170,37 @@ export async function deployProductionSite(
   gacFilename,
   productionDeployConfig: ProductionDeployConfig
 ) {
-  const { projectId, target, firebaseToolsVersion } = productionDeployConfig;
+  const { projectId, target, firebaseToolsVersion, force } = productionDeployConfig;
 
   const deploymentText = await execWithCredentials(
     ["deploy", "--only", `hosting${target ? ":" + target : ""}`],
     projectId,
     gacFilename,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion, force }
   );
 
   const deploymentResult = JSON.parse(deploymentText) as
     | ProductionSuccessResult
+    | ErrorResult;
+
+  return deploymentResult;
+}
+
+export async function deployWithForce(
+  gacFilename,
+  deployConfig: ForceDeployConfig
+) {
+  const { projectId, target, firebaseToolsVersion, force } = deployConfig;
+
+  const deploymentText = await execWithCredentials(
+    ["deploy", "--only", `hosting${target ? ":" + target : ""}`, "--force"],
+    projectId,
+    gacFilename,
+    { firebaseToolsVersion, force }
+  );
+
+  const deploymentResult = JSON.parse(deploymentText) as
+    | ForceSuccessResult
     | ErrorResult;
 
   return deploymentResult;
