@@ -33,25 +33,16 @@ inputs:
     default: "7d"
     required: false
   projectId:
-    description:
-      "The project to deploy to. If you leave this blank, make sure you check in
-      a .firebaserc file"
+    description: "The project to deploy to. If you leave this blank, make sure you check in a .firebaserc file"
     required: false
   channelId:
-    description: "The ID of the channel to deploy to. If you leave this blank,
-      a preview channel and its ID will be auto-generated per branch or PR."
+    description: "The ID of the channel to deploy to. If you leave this blank, a preview channel and its ID will be auto-generated per branch or PR."
     required: false
   target:
-    description:
-      "The target name of the Hosting site to deploy to. If you leave this blank,
-      the default target or all targets defined in the .firebaserc will be deployed to.
-      Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites)
-      for more information about deploy targets."
+    description: "The target name of the Hosting site to deploy to. If you leave this blank, the default target or all targets defined in the .firebaserc will be deployed to. Refer to the Hosting docs about [multiple sites](https://firebase.google.com/docs/hosting/multisites) for more information about deploy targets."
     required: false
   entryPoint:
-    description:
-      "The location of your firebase.json file, relative to the root of your
-      directory"
+    description: "The location of your firebase.json file, relative to the root of your directory"
     default: "."
     required: false
   firebaseToolsVersion:
@@ -63,6 +54,9 @@ inputs:
     description: >-
       Disable auto-commenting with the preview channel URL to the pull request
     default: "false"
+    required: false
+  force:
+    description: "Pass the --force option to firebase deploy, which is useful for deploying functions"
     required: false
 outputs:
   urls:
