@@ -5,12 +5,16 @@ import {
   deployProductionSite,
   ProductionDeployConfig,
   ProductionSuccessResult,
+  ForceDeployConfig,
+  deployWithForce,
+  ForceSuccessResult,
 } from "../src/deploy";
 import * as exec from "@actions/exec";
 import {
   channelError,
   channelMultiSiteSuccess,
   channelSingleSiteSuccess,
+  forceDeploySingleSiteSuccess,
   liveDeployMultiSiteSuccess,
   liveDeploySingleSiteSuccess,
 } from "./samples/cliOutputs";
@@ -23,6 +27,11 @@ const baseChannelDeployConfig: ChannelDeployConfig = {
 
 const baseLiveDeployConfig: ProductionDeployConfig = {
   projectId: "my-project",
+};
+
+const forceDeployConfig: ForceDeployConfig = {
+  projectId: "my-project",
+  force: true,
 };
 
 async function fakeExecFail(
@@ -148,6 +157,30 @@ describe("deploy", () => {
       expect(deployFlags).toContain("deploy");
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting");
+    });
+  });
+
+  describe("deploy with force flag", () => {
+    it("includes --force flag when force is true for deploy", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExec);
+
+      const forceDeployOutput: ForceSuccessResult = (await deployWithForce(
+        "my-file",
+        forceDeployConfig
+      )) as ForceSuccessResult;
+
+      expect(exec.exec).toBeCalled();
+      expect(forceDeployOutput).toEqual(forceDeploySingleSiteSuccess);
+
+      // Check the arguments that exec was called with
+      // @ts-ignore Jest adds a magic "mock" property
+      const args = exec.exec.mock.calls;
+      const deployFlags = args[0][1];
+      expect(deployFlags).toContain("deploy");
+      expect(deployFlags).toContain("--only");
+      expect(deployFlags).toContain("hosting");
+      expect(deployFlags).toContain("--force");
     });
   });
 });
