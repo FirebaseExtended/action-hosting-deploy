@@ -56,7 +56,8 @@ inputs:
     default: "false"
     required: false
   force:
-    description: "Pass the --force option to firebase deploy, which is useful for deploying functions"
+    description: "Pass 'true' to use the --force flag with firebase deploy, which is useful if you need to make changes that may increase your minimum bill like deploying more than 0 minimum instances of a function."
+    default: "false"
     required: false
 outputs:
   urls:
