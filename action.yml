@@ -56,7 +56,7 @@ inputs:
     default: "false"
     required: false
   force:
-    description: "Pass 'true' to use the --force flag with firebase deploy, which is useful if you need to make changes that may increase your minimum bill like deploying more than 0 minimum instances of a function."
+    description: "Pass 'true' to use the --force flag with firebase deploy. This will automatically accept any warning or prompts during deploy. Use with caution."
     default: "false"
     required: false
 outputs:
