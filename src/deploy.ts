@@ -40,11 +40,16 @@ export type ProductionSuccessResult = {
   };
 };
 
-export type ForceSuccessResult = {
+export type ForceProductionSuccessResult = {
   status: "success";
   result: {
     hosting: string | string[];
   };
+};
+
+export type ForceChannelSuccessResult = {
+  status: "success";
+  result: { [key: string]: SiteDeploy };
 };
 
 type DeployConfig = {
@@ -58,13 +63,13 @@ type DeployConfig = {
 export type ChannelDeployConfig = DeployConfig & {
   expires: string;
   channelId: string;
+  force?: boolean;
 };
 
-export type ForceDeployConfig = DeployConfig & {
-  force: boolean;
-};
 
-export type ProductionDeployConfig = DeployConfig & {};
+export type ProductionDeployConfig = DeployConfig & {
+  force?: boolean;
+};
 
 export function interpretChannelDeployResult(
   deployResult: ChannelSuccessResult
@@ -182,26 +187,6 @@ export async function deployProductionSite(
 
   const deploymentResult = JSON.parse(deploymentText) as
     | ProductionSuccessResult
-    | ErrorResult;
-
-  return deploymentResult;
-}
-
-export async function deployWithForce(
-  gacFilename,
-  deployConfig: ForceDeployConfig
-) {
-  const { projectId, target, firebaseToolsVersion, force } = deployConfig;
-
-  const deploymentText = await execWithCredentials(
-    ["deploy", "--only", `hosting${target ? ":" + target : ""}`, "--force"],
-    projectId,
-    gacFilename,
-    { firebaseToolsVersion, force }
-  );
-
-  const deploymentResult = JSON.parse(deploymentText) as
-    | ForceSuccessResult
     | ErrorResult;
 
   return deploymentResult;

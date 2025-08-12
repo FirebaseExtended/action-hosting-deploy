@@ -1,7 +1,8 @@
 import {
   ChannelSuccessResult,
   ErrorResult,
-  ForceSuccessResult,
+  ForceProductionSuccessResult,
+  ForceChannelSuccessResult,
   ProductionSuccessResult,
 } from "../../src/deploy";
 
@@ -56,12 +57,5 @@ export const liveDeployMultiSiteSuccess: ProductionSuccessResult = {
       "sites/action-hosting-deploy-demo/versions/cd71a5c43ba0921b",
       "sites/action-hosting-deploy-demo-2/versions/e843c071a09cecbf",
     ],
-  },
-};
-
-export const forceDeploySingleSiteSuccess: ForceSuccessResult = {
-  status: "success",
-  result: {
-    hosting: "sites/jeff-test-699d3/versions/7aebddc461b66922",
   },
 };
