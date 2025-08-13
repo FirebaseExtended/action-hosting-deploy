@@ -210,10 +210,11 @@ describe("deploy", () => {
       // @ts-ignore read-only property
       exec.exec = jest.fn(fakeExec);
 
-      const forceDeployOutput: ProductionSuccessResult = (await deployProductionSite(
-        "my-file",
-        forceProductionDeployConfig
-      )) as ProductionSuccessResult;
+      const forceDeployOutput: ProductionSuccessResult =
+        (await deployProductionSite(
+          "my-file",
+          forceProductionDeployConfig
+        )) as ProductionSuccessResult;
 
       expect(exec.exec).toBeCalled();
       expect(forceDeployOutput).toEqual(liveDeploySingleSiteSuccess);

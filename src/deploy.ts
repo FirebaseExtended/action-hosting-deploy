@@ -66,7 +66,6 @@ export type ChannelDeployConfig = DeployConfig & {
   force?: boolean;
 };
 
-
 export type ProductionDeployConfig = DeployConfig & {
   force?: boolean;
 };
