@@ -19,7 +19,7 @@ import {
   getInput,
   setFailed,
   setOutput,
-  startGroup,
+  startGroup
 } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 import { existsSync } from "fs";
@@ -29,19 +29,19 @@ import {
   deployPreview,
   deployProductionSite,
   ErrorResult,
-  interpretChannelDeployResult,
+  interpretChannelDeployResult
 } from "./deploy";
 import { getChannelId } from "./getChannelId";
 import {
   getURLsMarkdownFromChannelDeployResult,
-  postChannelSuccessComment,
+  postChannelSuccessComment
 } from "./postOrUpdateComment";
 
 // Inputs defined in action.yml
 const expires = getInput("expires");
 const projectId = getInput("projectId");
 const googleApplicationCredentials = getInput("firebaseServiceAccount", {
-  required: true,
+  required: true
 });
 const configuredChannelId = getInput("channelId");
 const isProductionDeploy = configuredChannelId === "live";
@@ -93,7 +93,7 @@ async function run() {
       const deployment = await deployProductionSite(gacFilename, {
         projectId,
         target,
-        firebaseToolsVersion,
+        firebaseToolsVersion
       });
       if (deployment.status === "error") {
         throw Error((deployment as ErrorResult).error);
@@ -107,8 +107,8 @@ async function run() {
         conclusion: "success",
         output: {
           title: `Production deploy succeeded`,
-          summary: `[${hostname}](${url})`,
-        },
+          summary: `[${hostname}](${url})`
+        }
       });
       return;
     }
@@ -121,7 +121,7 @@ async function run() {
       expires,
       channelId,
       target,
-      firebaseToolsVersion,
+      firebaseToolsVersion
     });
 
     if (deployment.status === "error") {
@@ -152,8 +152,8 @@ async function run() {
       conclusion: "success",
       output: {
         title: `Deploy preview succeeded`,
-        summary: getURLsMarkdownFromChannelDeployResult(deployment),
-      },
+        summary: getURLsMarkdownFromChannelDeployResult(deployment)
+      }
     });
   } catch (e) {
     setFailed(e.message);
@@ -162,8 +162,8 @@ async function run() {
       conclusion: "failure",
       output: {
         title: "Deploy preview failed",
-        summary: `Error: ${e.message}`,
-      },
+        summary: `Error: ${e.message}`
+      }
     });
   }
 }

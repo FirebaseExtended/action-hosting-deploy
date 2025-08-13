@@ -67,14 +67,14 @@ export async function postChannelSuccessComment(
 ) {
   const commentInfo = {
     ...context.repo,
-    issue_number: context.issue.number,
+    issue_number: context.issue.number
   };
 
   const commentMarkdown = getChannelDeploySuccessComment(result, commit);
 
   const comment = {
     ...commentInfo,
-    body: commentMarkdown,
+    body: commentMarkdown
   };
 
   startGroup(`Commenting on PR`);
@@ -100,7 +100,7 @@ export async function postChannelSuccessComment(
       await github.rest.issues.updateComment({
         ...context.repo,
         comment_id: commentId,
-        body: comment.body,
+        body: comment.body
       });
     } catch (e) {
       commentId = null;

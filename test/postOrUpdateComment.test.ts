@@ -1,15 +1,15 @@
 import {
   singleSiteComment,
   multiSiteComment,
-  notABotComment,
+  notABotComment
 } from "./samples/comments";
 import {
   getChannelDeploySuccessComment,
-  createBotCommentIdentifier,
+  createBotCommentIdentifier
 } from "../src/postOrUpdateComment";
 import {
   channelSingleSiteSuccess,
-  channelMultiSiteSuccess,
+  channelMultiSiteSuccess
 } from "./samples/cliOutputs";
 import { createDeploySignature } from "../src/hash";
 
@@ -37,7 +37,7 @@ describe("postOrUpdateComment", () => {
     const isCommentByBot = createBotCommentIdentifier(signature);
     const testComment = {
       user: { type: "Bot" },
-      body: singleSiteComment,
+      body: singleSiteComment
     };
     expect(isCommentByBot(testComment)).toEqual(true);
   });
@@ -47,7 +47,7 @@ describe("postOrUpdateComment", () => {
     const isCommentByBot = createBotCommentIdentifier(signature);
     const testComment = {
       user: { type: "Bot" },
-      body: notABotComment,
+      body: notABotComment
     };
     expect(isCommentByBot(testComment)).toEqual(false);
   });
