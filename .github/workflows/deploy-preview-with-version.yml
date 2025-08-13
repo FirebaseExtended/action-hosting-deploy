@@ -19,6 +19,8 @@ on: pull_request
 jobs:
   preview:
     runs-on: ubuntu-latest
+    permissions:
+      checks: read
     steps:
       - uses: actions/checkout@v5
       - name: Deploy to Firebase Hosting preview channel
