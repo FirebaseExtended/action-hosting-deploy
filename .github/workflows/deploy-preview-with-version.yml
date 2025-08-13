@@ -20,7 +20,7 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     permissions:
-      checks: read
+      checks: write
     steps:
       - uses: actions/checkout@v5
       - name: Deploy to Firebase Hosting preview channel
