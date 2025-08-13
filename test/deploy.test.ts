@@ -166,7 +166,7 @@ describe("deploy", () => {
       exec.exec = jest.fn(fakeExec);
 
       const config: ChannelDeployConfig = {
-        ...baseChannelDeployConfig,
+        ...forcePreviewDeployConfig,
         target: "my-second-site",
       };
 
