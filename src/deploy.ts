@@ -40,18 +40,6 @@ export type ProductionSuccessResult = {
   };
 };
 
-export type ForceProductionSuccessResult = {
-  status: "success";
-  result: {
-    hosting: string | string[];
-  };
-};
-
-export type ForceChannelSuccessResult = {
-  status: "success";
-  result: { [key: string]: SiteDeploy };
-};
-
 type DeployConfig = {
   projectId: string;
   target?: string;

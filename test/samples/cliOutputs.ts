@@ -1,8 +1,6 @@
 import {
   ChannelSuccessResult,
   ErrorResult,
-  ForceProductionSuccessResult,
-  ForceChannelSuccessResult,
   ProductionSuccessResult,
 } from "../../src/deploy";
 
