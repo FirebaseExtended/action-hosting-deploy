@@ -157,7 +157,7 @@ Disable commenting in a PR with the preview URL.
 
 ### `force` _{boolean}_
 
-Bypass the confirmation prompt.
+Uses the Firebase CLI's `--force` flag to automatically accept all interactive prompts.
 
 ## Outputs
 
