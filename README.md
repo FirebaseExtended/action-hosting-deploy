@@ -56,6 +56,19 @@ jobs:
           # force: true
 ```
 
+### Set permissions
+
+The workflow needs some permissions, which need to be enabled at the repository/organization level or explicitly in the workflow. 
+
+Enabling them in the workflow is recommended, they can be set either at the workflow or the job level:
+
+```yml
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+```
+
 ### Deploy to your live channel on merge
 
 Add a workflow (`.github/workflows/deploy-prod.yml`):
