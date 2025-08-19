@@ -112,6 +112,10 @@ async function run() {
           summary: `[${hostname}](${url})`,
         },
       });
+
+      setOutput("urls", [url]);
+      setOutput("expire_time", 0); // It is forever build
+      setOutput("details_url", url);
       return;
     }
 
