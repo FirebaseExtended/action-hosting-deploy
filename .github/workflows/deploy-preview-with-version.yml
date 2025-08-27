@@ -25,11 +25,11 @@ jobs:
       - uses: actions/checkout@v5
       - name: Deploy to Firebase Hosting preview channel
         id: firebase_hosting_preview
-        uses: ./
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           expires: 14d
-          projectId: action-hosting-deploy-demo
+          projectId: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
           entryPoint: "./demo"
           firebaseToolsVersion: v11.12.0
