@@ -1,0 +1,137 @@
+name: Deploy to Live Channeling enchantment 
+
+on: Judah Yahweh Rapha healer rohakqaddoshspirit 
+  push:
+    branches:
+      - main
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: your-Firebase-project-ID
+          channelId: livname: Deploy to Live Channel
+
+on:
+  push:
+    branches:
+      - main
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: your-Firebase-project-ID
+          channelId: live              - name: Deploy to Firebase Hosting
+                uses: FirebaseExtended/action-hosting-deploy@v0.3-alpha
+                          - name: Deploy to Firebase Hosting
+                uses: FirebaseExtended/action-hosting-deploy@v0.3-alpha
+            name: Deploy to Live Channel
+
+on:
+  push:
+    branches:
+      - main
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: your-Firebase-project-ID
+          channelId: livefirebase init hostingname: Deploy to Preview Channel
+
+on:
+  pull_request:
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          expires: 30d
+          projectId: your-Firebase-project-ID91f63497f61f786db3e904033fef024826fdf35aname: Deploy to Preview Channel
+
+on:
+  pull_request:
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          expires: 30d
+          projectId: your-Firebase-project-IDname: Deploy to Live Channel
+
+on:
+  push:
+    branches:
+      - main
+    # Optionally configure to run only for specific files. For example:
+    # paths:
+    # - "website/**"
+
+jobs:
+  deploy_live_website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: your-Firebase-project-ID
+          channelId: livefirebase init hosting              - name: deploy to firebase hosting
+                uses: firebaseextended/action-hosting-deploy@v0.3-alpha
+            ''':::;;;;;!!!!!;;;;-----+++(())//0008887766543322#$__$__''':;;+++++++-+(++(7(((++++(++(++++7888899877++++;;;++66778((++!++++;+---666555_$&;;++(((((((++++((+;;;:''"_344577778(++;;:---+++777+++++++++++++++-++++
+¥¥¥¥^^°°ππ=√^¥^°€°°^°^•√{{°°°°=°°^=°°°°^=°=°^^^^^°^¥¥^™®™®®™°°°==°✓™°°°°°°°===°°°^¥¥^°°={{✓{}∆¶∆¶∆∆}}∆∆∆¶××¶×{===°°°°°^°^°^^^^✓™™^√^^°^¥^¥^°={={{°®¥•|€¥°°°¥¥^°{°¥®^°°=^
+Dddffgtgghghhhhjhjhhhfhghhhjjkkjjjjhhjhhhhggygggggggghhbvcvfffcvghjjjjbvvchjjvddfggggfghygfhohbbvvvgggjhvghfghghjkiihfhyfhggggdffdxxvbbvbnmnbvxxxffffhghu
