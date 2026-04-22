@@ -19,7 +19,7 @@ branding:
   icon: "globe"
   color: "blue"
 runs:
-  using: "node20"
+  using: "node24"
   main: "bin/action.min.js"
 inputs:
   repoToken:
