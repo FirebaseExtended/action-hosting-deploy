@@ -87,6 +87,45 @@ jobs:
           # force: true
 ```
 
+### Authenticate using Workload Identity Federation
+
+Managing service account keys poses a security risk. Workload Identity Federation can be used to reduce the risk when running GitHub Actions.  
+With identity federation, GitHub will generate a JWT that will be used to authenticate against Google Cloud APIs.
+
+Before setting up your GitHub Action, you need to follow these steps to prepare your Workload Identity Pool:  
+https://github.com/google-github-actions/auth?tab=readme-ov-file#workload-identity-federation-through-a-service-account
+
+```yaml
+jobs:
+  deploy_using_workload_identity_federatoin:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write' # This permission is needed
+    steps:
+      - uses: actions/checkout@v2
+
+      # Add these two steps to generate the credential to use with the `action-hosting-deploy` action.
+      - name: Prepare Google Cloud authentication 
+        uses: 'google-github-actions/auth@v2'
+        with:
+          service_account: 'service-account@your-project.iam.gserviceaccount.com'
+          workload_identity_provider: 'projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github/providers/github-your-org'
+          create_credentials_file: true
+      - name: Get federated identity credentials file
+        run: |
+          echo "SERVICE_ACCOUNT_KEY=$(cat "${{ steps.auth.outputs.credentials_file_path }}" | tr -d '\n')" >> $GITHUB_ENV
+
+      # Add any build steps here. For example:
+      # - run: npm ci && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ env.SERVICE_ACCOUNT_KEY }}" # This line is different than usual !!
+          projectId: your-Firebase-project-ID
+          channelId: live
+```
+
 ## Options
 
 ### `firebaseServiceAccount` _{string}_ (required)
