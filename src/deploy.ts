@@ -74,10 +74,16 @@ async function execWithCredentials(
   args: string[],
   projectId,
   gacFilename,
-  opts: { debug?: boolean; firebaseToolsVersion?: string }
+  opts: { debug?: boolean; firebaseToolsVersion?: string; useJson?: boolean }
 ) {
   let deployOutputBuf: Buffer[] = [];
   const debug = opts.debug || false;
+  // Production function deploys pass `useJson: false` so callers can trust
+  // exit code instead of parsing stdout. firebase-tools v15 `--json` mode has
+  // a regression where non-fatal scheduler-verification warnings get coerced
+  // into JSON error objects with exit code 2, even though the deploy
+  // succeeds. Plain output exits 0 in the same situation.
+  const useJson = opts.useJson ?? true;
   const firebaseToolsVersion = opts.firebaseToolsVersion || "latest";
 
   try {
@@ -86,9 +92,11 @@ async function execWithCredentials(
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
-        debug
-          ? "--debug" // gives a more thorough error message
-          : "--json", // allows us to easily parse the output
+        ...(debug
+          ? ["--debug"] // gives a more thorough error message
+          : useJson
+          ? ["--json"] // allows us to easily parse the output
+          : []),
       ],
       {
         listeners: {
@@ -114,6 +122,7 @@ async function execWithCredentials(
       await execWithCredentials(args, projectId, gacFilename, {
         debug: true,
         firebaseToolsVersion,
+        useJson,
       });
     } else {
       throw e;
@@ -154,19 +163,29 @@ export async function deployPreview(
 export async function deployProductionSite(
   gacFilename,
   productionDeployConfig: ProductionDeployConfig
-) {
+): Promise<ProductionSuccessResult | ErrorResult> {
   const { projectId, target, firebaseToolsVersion } = productionDeployConfig;
 
-  const deploymentText = await execWithCredentials(
+  // Production function deploys: rely on firebase-tools' exit code rather
+  // than parsing `--json` stdout. The success path in the caller doesn't
+  // actually read the parsed result — only the `status === "error"` check
+  // matters, and a non-zero exit will throw before we get here.
+  await execWithCredentials(
     ["deploy", "--only", `functions${target ? ":" + target : ""}`],
     projectId,
     gacFilename,
-    { firebaseToolsVersion }
+    { firebaseToolsVersion, useJson: false }
   );
 
-  const deploymentResult = JSON.parse(deploymentText) as
-    | ProductionSuccessResult
-    | ErrorResult;
+  // If exec didn't throw, the deploy succeeded. Synthesize the
+  // ProductionSuccessResult the caller expects. Return type stays as the
+  // pre-existing union so the caller's `status === "error"` check still
+  // narrows correctly — that branch is now unreachable but keeps the
+  // public shape stable for downstream consumers.
+  const deploymentResult: ProductionSuccessResult | ErrorResult = {
+    status: "success",
+    result: { hosting: projectId },
+  };
 
   return deploymentResult;
 }
