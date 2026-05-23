@@ -15,6 +15,7 @@
  */
 
 import { exec } from "@actions/exec";
+import { existsSync } from "fs";
 
 export type SiteDeploy = {
   site: string;
@@ -74,6 +75,19 @@ export function interpretChannelDeployResult(
   };
 }
 
+function getPackageManagerExecuteCommand(): string {
+  if (existsSync("./package-lock.json")) {
+    return "npx";
+  }
+  if (existsSync("./yarn.lock") && existsSync("./.yarnrc.yml")) {
+    return "yarn dlx";
+  }
+  if (existsSync("./pnpm-lock.yaml")) {
+    return "pnpm dlx";
+  }
+  return "npx";
+}
+
 async function execWithCredentials(
   args: string[],
   projectId,
@@ -84,10 +98,11 @@ async function execWithCredentials(
   const debug = opts.debug || false;
   const firebaseToolsVersion = opts.firebaseToolsVersion || "latest";
   const force = opts.force;
+  const packageManager = getPackageManagerExecuteCommand();
 
   try {
     await exec(
-      `npx firebase-tools@${firebaseToolsVersion}`,
+      `${packageManager} firebase-tools@${firebaseToolsVersion}`,
       [
         ...args,
         ...(projectId ? ["--project", projectId] : []),
