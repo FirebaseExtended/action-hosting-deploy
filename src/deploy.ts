@@ -79,7 +79,7 @@ function getPackageManagerExecuteCommand(): string {
   if (existsSync("./package-lock.json")) {
     return "npx";
   }
-  if (existsSync("./yarn.lock")) {
+  if (existsSync("./yarn.lock") && existsSync("./.yarnrc.yml")) {
     return "yarn dlx";
   }
   if (existsSync("./pnpm-lock.yaml")) {
