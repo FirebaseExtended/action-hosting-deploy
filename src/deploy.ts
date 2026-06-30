@@ -40,6 +40,23 @@ export type ProductionSuccessResult = {
   };
 };
 
+type ChannelListResult = {
+  status: "success";
+  result: {
+    channels: Array<{ name: string; url: string; expireTime: string }>;
+  };
+};
+
+// Firebase returns this (FAILED_PRECONDITION) when the version being released is
+// already the live/active version for the target. The upload + finalize already
+// succeeded and the site is serving the correct content, so it's a successful
+// no-op rather than a failure.
+const ALREADY_ACTIVE_VERSION = /is the current active version/i;
+
+export function isAlreadyActiveVersionError(message: unknown): boolean {
+  return typeof message === "string" && ALREADY_ACTIVE_VERSION.test(message);
+}
+
 type DeployConfig = {
   projectId: string;
   target?: string;
@@ -110,18 +127,28 @@ async function execWithCredentials(
       }
     );
   } catch (e) {
-    console.log(Buffer.concat(deployOutputBuf).toString("utf-8"));
+    const output = Buffer.concat(deployOutputBuf).toString("utf-8");
+    console.log(output);
     console.log(e.message);
 
     if (!debug) {
-      console.log(
-        "Retrying deploy with the --debug flag for better error output"
-      );
-      await execWithCredentials(args, projectId, gacFilename, {
-        debug: true,
-        firebaseToolsVersion,
-        force,
-      });
+      if (
+        isAlreadyActiveVersionError(output) ||
+        isAlreadyActiveVersionError(e.message)
+      ) {
+        console.log(
+          "The deployed version is already the current active version; treating as a successful no-op deploy."
+        );
+      } else {
+        console.log(
+          "Retrying deploy with the --debug flag for better error output"
+        );
+        await execWithCredentials(args, projectId, gacFilename, {
+          debug: true,
+          firebaseToolsVersion,
+          force,
+        });
+      }
     } else {
       throw e;
     }
@@ -155,7 +182,58 @@ export async function deployPreview(
     | ChannelSuccessResult
     | ErrorResult;
 
+  if (
+    deploymentResult.status === "error" &&
+    isAlreadyActiveVersionError(deploymentResult.error)
+  ) {
+    return await getExistingChannel(gacFilename, deployConfig);
+  }
+
   return deploymentResult;
+}
+
+async function getExistingChannel(
+  gacFilename: string,
+  deployConfig: ChannelDeployConfig
+): Promise<ChannelSuccessResult> {
+  const { projectId, channelId, target, firebaseToolsVersion } = deployConfig;
+
+  const listText = await execWithCredentials(
+    ["hosting:channel:list", ...(target ? ["--site", target] : [])],
+    projectId,
+    gacFilename,
+    { firebaseToolsVersion }
+  );
+
+  const list = JSON.parse(listText.trim()) as ChannelListResult | ErrorResult;
+
+  const channel =
+    list.status === "success"
+      ? list.result.channels.find((c) =>
+          c.name.endsWith(`/channels/${channelId}`)
+        )
+      : undefined;
+
+  if (!channel) {
+    console.log(
+      `Could not find channel "${channelId}" when reading back the already-active deploy; reporting success without URL details.`
+    );
+  }
+
+  const site =
+    channel?.name.match(/\/sites\/([^/]+)\//)?.[1] ?? target ?? channelId;
+
+  return {
+    status: "success",
+    result: {
+      [site]: {
+        site,
+        ...(target ? { target } : {}),
+        url: channel?.url ?? "",
+        expireTime: channel?.expireTime ?? "",
+      },
+    },
+  };
 }
 
 export async function deployProductionSite(
@@ -175,6 +253,16 @@ export async function deployProductionSite(
   const deploymentResult = JSON.parse(deploymentText) as
     | ProductionSuccessResult
     | ErrorResult;
+
+  if (
+    deploymentResult.status === "error" &&
+    isAlreadyActiveVersionError(deploymentResult.error)
+  ) {
+    return {
+      status: "success",
+      result: { hosting: target || projectId },
+    };
+  }
 
   return deploymentResult;
 }
