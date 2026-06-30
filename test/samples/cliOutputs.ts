@@ -41,6 +41,26 @@ export const channelError: ErrorResult = {
     "HTTP Error: 400, Channel IDs can only include letters, numbers, underscores, hyphens, and periods.",
 };
 
+export const alreadyActiveVersionError: ErrorResult = {
+  status: "error",
+  error:
+    "FAILED_PRECONDITION Can't release to projects/-/sites/my-project/channels/my-channel: " +
+    "supplied version projects/my-project/sites/my-project/versions/abc123 is the current active version",
+};
+
+export const channelListSuccess = {
+  status: "success",
+  result: {
+    channels: [
+      {
+        name: "projects/my-project/sites/my-project/channels/my-channel",
+        url: "https://my-project--my-channel-abc123.web.app",
+        expireTime: "2020-10-27T21:32:57.233344586Z",
+      },
+    ],
+  },
+};
+
 export const liveDeploySingleSiteSuccess: ProductionSuccessResult = {
   status: "success",
   result: {

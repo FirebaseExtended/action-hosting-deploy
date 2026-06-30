@@ -3,12 +3,15 @@ import {
   ChannelDeployConfig,
   deployPreview,
   deployProductionSite,
+  isAlreadyActiveVersionError,
   ProductionDeployConfig,
   ProductionSuccessResult,
 } from "../src/deploy";
 import * as exec from "@actions/exec";
 import {
+  alreadyActiveVersionError,
   channelError,
+  channelListSuccess,
   channelMultiSiteSuccess,
   channelSingleSiteSuccess,
   liveDeployMultiSiteSuccess,
@@ -74,6 +77,24 @@ async function fakeExec(
   options?.listeners?.stdout(
     Buffer.from(JSON.stringify(successOutput), "utf8")
   );
+}
+
+async function fakeExecAlreadyActive(
+  mainCommand: string,
+  args: string[],
+  options: exec.ExecOptions
+) {
+  if (args[0] === "hosting:channel:list") {
+    options?.listeners?.stdout(
+      Buffer.from(JSON.stringify(channelListSuccess), "utf8")
+    );
+    return;
+  }
+
+  options?.listeners?.stdout(
+    Buffer.from(JSON.stringify(alreadyActiveVersionError), "utf8")
+  );
+  throw new Error("The process failed with exit code 1");
 }
 
 describe("deploy", () => {
@@ -227,6 +248,61 @@ describe("deploy", () => {
       expect(deployFlags).toContain("--only");
       expect(deployFlags).toContain("hosting");
       expect(deployFlags).toContain("--force");
+    });
+  });
+
+  describe("already-active version handling", () => {
+    it("isAlreadyActiveVersionError matches the FAILED_PRECONDITION message", () => {
+      expect(isAlreadyActiveVersionError(alreadyActiveVersionError.error)).toBe(
+        true
+      );
+    });
+
+    it("isAlreadyActiveVersionError ignores unrelated errors", () => {
+      expect(isAlreadyActiveVersionError(channelError.error)).toBe(false);
+      expect(isAlreadyActiveVersionError(undefined)).toBe(false);
+    });
+
+    it("treats an already-active production deploy as a successful no-op", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExecAlreadyActive);
+
+      const result = (await deployProductionSite(
+        "my-file",
+        baseLiveDeployConfig
+      )) as ProductionSuccessResult;
+
+      expect(result.status).toBe("success");
+      // It must not retry with the --debug flag for this known error.
+      expect(exec.exec).toBeCalledTimes(1);
+      // @ts-ignore Jest adds a magic "mock" property
+      expect(exec.exec.mock.calls[0][1]).not.toContain("--debug");
+    });
+
+    it("treats an already-active preview deploy as success and reads the channel back", async () => {
+      // @ts-ignore read-only property
+      exec.exec = jest.fn(fakeExecAlreadyActive);
+
+      const result = (await deployPreview(
+        "my-file",
+        baseChannelDeployConfig
+      )) as ChannelSuccessResult;
+
+      expect(result.status).toBe("success");
+
+      const siteResult = Object.values(result.result)[0];
+      expect(siteResult.url).toBe(
+        "https://my-project--my-channel-abc123.web.app"
+      );
+      expect(siteResult.expireTime).toBe("2020-10-27T21:32:57.233344586Z");
+
+      // First the channel deploy (which fails), then the channel list lookup —
+      // and no --debug retry in between.
+      expect(exec.exec).toBeCalledTimes(2);
+      // @ts-ignore Jest adds a magic "mock" property
+      const calls = exec.exec.mock.calls;
+      expect(calls[0][1]).not.toContain("--debug");
+      expect(calls[1][1]).toContain("hosting:channel:list");
     });
   });
 });
